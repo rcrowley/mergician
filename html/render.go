@@ -14,9 +14,14 @@ func Print(n *Node) (err error) {
 	return
 }
 
-// Render is an alias for x/net/html's Render function.
+// Render is almost an alias for x/net/html's Render function but ensures
+// files end with a trailing '\n' character.
 func Render(w io.Writer, n *Node) error {
-	return html.Render(w, n)
+	if err := html.Render(w, n); err != nil {
+		return err
+	}
+	_, err := w.Write([]byte{'\n'})
+	return err
 }
 
 // String renders the *Node to a string and returns it. In case of error,
