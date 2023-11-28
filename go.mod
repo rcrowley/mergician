@@ -1,4 +1,4 @@
-module github.com/rcrowley/cms
+module github.com/rcrowley/mergician
 
 go 1.20
 
