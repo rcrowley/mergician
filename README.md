@@ -1,22 +1,22 @@
-CMS that needs a better name
-============================
+Mergician
+=========
 
-I like writing plain HTML. I like it so much more than using all the other tools I've used for making websites that I've been known to use `sed`(1) to make bulk edits or over-compromise on navigation to avoid having to use a higher-level CMS. Anyway, this is my take on a truly minimalist CMS.
+I like writing plain HTML. I like it so much more than using all the other tools I've used for making websites that I've been known to use `sed`(1) to make bulk edits or over-compromise on navigation to avoid having to use a higher-level CMS. Anyway, Mergician is the beginning of a truly minimalist CMS.
+
+Usage
+-----
+
+```sh
+mergician [-o <output>] <input>[...]
+```
+
+* `-o <output>`: write to this file instead of standard output
+* `<input>[...]`:  pathname to one or more input HTML files
+
+Example
+-------
 
 Consider these inputs:
-
-`article.html`:
-
-```html
-<!DOCTYPE html>
-<html>
-<head><title>My cool webpage</title></head>
-<body>
-<h1>Things</h1>
-<p>Stuff</p>
-</body>
-</html>
-```
 
 `template.html`:
 
@@ -24,138 +24,107 @@ Consider these inputs:
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link href="template.css" rel="stylesheet">
 <meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<title>Website</title>
 </head>
 <body>
 <header><h1>Website</h1></header>
+<br/>
+<article class="body"></article>
+<br/>
 <footer><p>&copy; 2023</p></footer>
 </body>
 </html>
 ```
-
-Then running `cms -srcdir . -dstdir public_html template.html article.html` (so ordered to make `xargs`(1)-like invocations more natural) will combine the two and write `public_html/article.html` to disk containing the following:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>My cool webpage</title>
-</head>
-<body>
-<header><h1>Website</h1></header>
-<h1>Things</h1>
-<p>Stuff</p>
-<footer><p>&copy; 2023</p></footer>
-</body>
-</html>
-```
-
-I still need to figure out how to indicate in the template's HTML how to order/interleave body elements, where order matters. I want the template to remain a viable HTML file itself but, more importantly, I really, really want to keep the inputs as viable HTML files.
-
-I think this calls for microformats. Something like this:
 
 `article.html`:
 
 ```html
 <!DOCTYPE html>
 <html>
-<head><title>My cool webpage</title></head>
+<head>
+<link href="template.css" rel="stylesheet">
+<title>My cool webpage</title>
+</head>
 <body>
+<h1>Things</h1>
+<p>Stuff</p>
+</body>
+</html>
+```
+
+`mergician template.html article.html` (so ordered to make `xargs`(1)-like invocations more natural) will combine the two and write the following to standard output:
+
+```html
+<!DOCTYPE html><html lang="en"><head>
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Website / My cool webpage</title>
+<link href="template.css" rel="stylesheet"/>
+</head>
+<body>
+<header><h1>Website</h1></header>
+<br/>
 <article class="body">
 <h1>Things</h1>
 <p>Stuff</p>
 </article>
-</body>
-</html>
+<br/>
+<footer><p>© 2023</p></footer>
+</body></html>
 ```
 
-`template.html`:
+Merge algorithm
+---------------
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-</head>
-<body>
-<header><h1>Website</h1></header>
-<article class="body"></article>
-<footer><p>&copy; 2023</p></footer>
-</body>
-</html>
+Mergician merges the second HTML document it's given into the first, then the third into the first, and so on until all the documents are processed.
+
+For each pair of documents it merges, it follows these steps:
+
+1. Merge `<title>` tags by appending " / " and the second `<title>` tag's text to the first `<title>` tag's text. (TODO: If there is no first `<title>` tag, copy the second `<title>` tag in unchanged.)
+2. Merge `<head>` tags by appending all the children from the second `<head>` tag into the first.
+3. Merge `<body>` tags by appending all the children from the second `<body>` tag into the `<article class="body">`, `<div class="body">`, or `<section class="body">` in the first. (TODO: Extend this microformats-like structure as described below.)
+
+Configuration
+-------------
+
+At present, the rules of the merge algorithm are fixed. However, I have a plan to expose the rules to reconfiguration to support other merge strategies and microformats. Here is how the default merge algorithm would be expressed in the configuration language:
+
+```
+<title> += " / " + <title>
+<head> += <head> - <title>
+<article class="body"> = <body>
+<div class="body"> = <body>
+<section class="body"> = <body>
 ```
 
-And whatever the command is would merge those into this:
+I think there's probably value (especially for some of the imagined CMS use-cases below) to differentiate between merging in an element versus that element's children. For example, when merging HTML documents using this default configuration it's imperative to merge in the `<body>` tag's children since it's nonsense for a `<body>` tag to appear nested within another `<body>` tag, while when constructing a reverse-chronological index it might make more sense to keep the `<section class="index">` tags whole to provide some structural separation between each entry in the index. The syntax could look like this, which alludes to CSS (a plus) but also looks like a syntax error (when thinking in terms of r-values in most programming languages).
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>My cool webpage</title>
-</head>
-<body>
-<header><h1>Website</h1></header>
-<article class="body">
-<h1>Things</h1>
-<p>Stuff</p>
-</section>
-<footer><p>&copy; 2023</p></footer>
-</body>
-</html>
+```
+<article class="body"> = <body> *                  # merge <body>'s children
+<section class="body"> += <section class="index"> # merge each <section class="index"> whole
 ```
 
-This still doesn't feel quite right.
+CMS
+---
 
-At any rate I'd probably build it with <https://pkg.go.dev/golang.org/x/net/html>.
+The forthcoming CMS will build upon this merge algorithm to additionally support some or all of the features one might expect from a modern CMS.
 
-----
+* Reverse-chronological index
+* Atom/RSS feeds
+* `sitemap.xml`
+* Lambda function invocation on publish (to e.g. send email to subscribers)
 
-`class="body"` should be something of a special case that pulls the _entire_ `<body>` of the other document into the tag bearing that class.
+As a teaser, here are some configurations and invocations that might power parts of the CMS:
 
-How would I build a feed or index?
+* Construct a reverse-chronological index:
+    * Configuration: `<section class="index"> += <h1>`
+    * Invocation: `mergician index.html newest.html ... oldest.html`
+* Render to both HTML for the Web and an HTML email:
+    * Web: `mergician article-template.html example.html`
+    * Email: `mergician email-template.html example.html`
 
-* The order of the files given as input will matter a lot: `cms ... template.html first.html second.html third.html`
-* That suggests we'd want a tool that looks inside a selection of files and sorts them by e.g. the first `<date>` tag it finds
-* I wonder if we could do something with repetition of `class="body"` (since it's a class and can be repeated) to take each successive argument
-* This wouldn't help use with input file lists of an unknown length, though maybe we could infer something by there being two `class="body"`
-
-----
-
-1. Process each document to construct an index of all the potential merge sites in each one. The index should map a merge site to an ordered list of `*Node`. Merge sites include:
-    * `<head>`
-    * `<body>`
-    * `<article>`
-    * `<article class="body">` (as an example of a container for a whole `<body>` from a document being merged in)
-    * We might need a class prefix or something to distinguish merge sites from other uses of CSS
-    * `<script>` in `<body>` (or will this be covered simply by `<body>`?)
-    * et al
-2. For each merge site, append all the children from input document, in order, into the output document. Do not append the merge site itself but rather each child. For example, don't append an input `<head>` to an output `<head>`, either inside or as a sibling; instead, append the e.g. `<link>`, `<meta>`, and `<title>` it contains into the output `<head>`.
-
-----
-
-Even if I don't implement it right out of the gate, I think there's a transmogrification language hiding in the informal spec I've been building to. The grammar would probably look something like this:
-
-    Rules = Rule { Rules } .
-    Rule = TagSpec [ "*" ] "->" TagSpec "\n" .
-    TagSpec = "<" Name [ "class=\"" Name "\"" ] ">"
-    Name = /^[a-z][a-z0-9]*$/ | "*"
-
-The informal spec I've been sketching could be expressed as follows in this grammar:
-
-    <head> * -> <head>
-    <body> * -> <* class="body">
-
-That might be it? I'm failing to remember why the `*` token is important.
-
-----
-
-No, that's insane. The syntax should be something like this encoding of what should probably be the default rules even before such a syntax for customization exists:
-
-    <head> += <head> *
-    <article class="body"> = <body>
-    <section class="body"> = <body>
-    <div class="body"> = <body>
-
-Note that this new syntax is more of a reference to assignment in a typical programming language with typical l-values and r-values.
+Don't let this imply that the CMS will be a shell program, though. I'm sure it will be a high-level Go program and it will use Mergician's configuration and merge algorithms heavily.
