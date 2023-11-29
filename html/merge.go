@@ -75,6 +75,7 @@ func merge(dst, src *Node) error {
 	}
 	if IsAtom(atom.Article, atom.Div, atom.Section)(dst) && HasAttr("class", "body")(dst) {
 		if srcBody := Find(src, IsAtom(atom.Body)); srcBody != nil {
+			dst.FirstChild, dst.LastChild = nil, nil
 			for n := srcBody.FirstChild; n != nil; n = n.NextSibling {
 				dst.AppendChild(copyNode(n))
 			}
