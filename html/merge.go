@@ -7,13 +7,13 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-// Merge several parsed HTML documents into one. The second argument is merged
+// Merge several parsed HTML documents into one. The second node is merged
 // into a copy of the first, then the third into the copy, and so on until all
 // arguments are processed. If any step results in an error, processing stops
 // and a nil *Node is returned along with the error.
-func Merge(in ...*Node) (*Node, error) {
+func Merge(in []*Node, rules []Rule) (*Node, error) {
 	if len(in) == 0 {
-		panic("html.Merge called with zero arguments")
+		panic("html.Merge called with zero inputs")
 	}
 	out := copyNode(in[0])
 	if len(in) == 1 {
@@ -21,7 +21,7 @@ func Merge(in ...*Node) (*Node, error) {
 	}
 
 	for i := 1; i < len(in); i++ {
-		if err := merge(out, in[i]); err != nil {
+		if err := merge(out, in[i], rules); err != nil {
 			return nil, err
 		}
 	}
@@ -53,17 +53,24 @@ func copyNode(in *Node) (out *Node) {
 	return
 }
 
-func merge(dst, src *Node) error {
+func merge(dst, src *Node, rules []Rule) error {
 
-	// XXX EXPLAIN YOURSELF
+	// <title> is special and I'm not sure what syntax to offer to expose it.
 	if IsAtom(atom.Title)(dst) {
 		if srcTitle := Find(src, IsAtom(atom.Title)); srcTitle != nil {
 			for n := srcTitle.FirstChild; n != nil; n = n.NextSibling {
-				dst.AppendChild(&Node{Data: " / ", Type: html.TextNode})
-				dst.AppendChild(copyNode(n))
+				dst.InsertBefore(&Node{
+					Data: " \u2014 ", // " &mdash; " but literal
+					Type: html.TextNode,
+				}, dst.FirstChild)
+				dst.InsertBefore(copyNode(n), dst.FirstChild)
 			}
 		}
 	}
+
+	// <head> += <head>, except for <title>, which is ignored here.
+	// TODO dedupe <link> and <meta> tags so we don't
+	// TODO e.g. have two <meta charset="utf-8"> tags.
 	if IsAtom(atom.Head)(dst) {
 		if srcHead := Find(src, IsAtom(atom.Head)); srcHead != nil {
 			for n := srcHead.FirstChild; n != nil; n = n.NextSibling {
@@ -73,6 +80,9 @@ func merge(dst, src *Node) error {
 			}
 		}
 	}
+
+	// <article class="body"> = <body>, <div class="body"> = <body>, and
+	// <section class="body"> = <body>, which is actually what this does.
 	if IsAtom(atom.Article, atom.Div, atom.Section)(dst) && HasAttr("class", "body")(dst) {
 		if srcBody := Find(src, IsAtom(atom.Body)); srcBody != nil {
 			dst.FirstChild, dst.LastChild = nil, nil
@@ -82,10 +92,12 @@ func merge(dst, src *Node) error {
 		}
 	}
 
+	// TODO for _, rule := range rules {}
+
 	// TODO suppress merging a "\n" text node immediately after another "\n" text node
 
 	for dstChild := dst.FirstChild; dstChild != nil; dstChild = dstChild.NextSibling {
-		merge(dstChild, src)
+		merge(dstChild, src, rules)
 	}
 	return nil
 }

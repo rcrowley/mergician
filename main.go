@@ -37,7 +37,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	out, err = html.Merge(in...)
+	out, err = html.Merge(in, html.DefaultRules())
 
 	if *output == "-" {
 		err = html.Print(out)

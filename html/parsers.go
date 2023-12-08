@@ -7,8 +7,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-type Node = html.Node
-
 // Parse reads a complete HTML document from an io.Reader. It is the caller's
 // responsibility to ensure the io.Reader is positioned at the beginning of
 // the document and to clean up (i.e. close file descriptors, etc.) afterwards.

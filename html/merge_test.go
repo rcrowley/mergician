@@ -11,7 +11,7 @@ func TestMergeSimple(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	n, err := Merge(n0, n1)
+	n, err := Merge([]*Node{n0, n1}, DefaultRules())
 	if err != nil {
 		t.Fatal(err)
 	}
