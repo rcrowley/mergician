@@ -12,6 +12,9 @@ func TestParseFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	printNodeAsTree(t, n, "")
+	if n.Type != html.DocumentNode {
+		t.Fatal(nodeTypeString(n.Type))
+	}
 }
 
 func printNodeAsTree(t *testing.T, n *Node, indent string) {

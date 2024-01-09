@@ -9,9 +9,8 @@ import (
 )
 
 // Print serializes and prints the *Node to standard output.
-func Print(n *Node) (err error) {
-	err = Render(os.Stdout, n)
-	return
+func Print(n *Node) error {
+	return Render(os.Stdout, n)
 }
 
 // Render is almost an alias for x/net/html's Render function but ensures

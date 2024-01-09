@@ -26,3 +26,24 @@ func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 	}
 	return
 }
+
+func nodeTypeString(t html.NodeType) string {
+	switch t {
+	case html.CommentNode:
+		return "CommentNode"
+	case html.DoctypeNode:
+		return "DoctypeNode"
+	case html.DocumentNode:
+		return "DocumentNode"
+	case html.ElementNode:
+		return "ElementNode"
+	case html.ErrorNode:
+		return "ErrorNode"
+	case html.RawNode:
+		return "RawNode"
+	case html.TextNode:
+		return "TextNode"
+	default:
+		return fmt.Sprint(t)
+	}
+}
