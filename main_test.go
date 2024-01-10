@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
+	"os"
 	"testing"
 
 	"github.com/rcrowley/mergician/html"
@@ -16,10 +19,20 @@ func TestParseMergeHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(html.String(out)) // TODO assertions
+	t.Logf("%#v", html.String(out)) // TODO assertions
 }
 
 func TestParseMergeMarkdown(t *testing.T) {
+
+	// Remove the HTML and hash files. We're cheating and reusing a file from
+	// another test and this ensures we don't encounter conflicts.
+	if err := os.Remove("markdown/test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		t.Fatal(err)
+	}
+	if err := os.Remove("markdown/.test.html.sha256"); err != nil && errors.Is(err, fs.ErrNotExist) {
+		t.Fatal(err)
+	}
+
 	pathnames := []string{"html/template.html", "markdown/test.md"}
 	in, err := parse(pathnames)
 	if err != nil {
@@ -29,5 +42,5 @@ func TestParseMergeMarkdown(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(html.String(out)) // TODO assertions
+	t.Logf("%#v", html.String(out)) // TODO assertions
 }
