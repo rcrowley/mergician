@@ -3,6 +3,22 @@ Mergician
 
 I like writing plain HTML. I like it so much more than using all the other tools I've used for making websites that I've been known to use `sed`(1) to make bulk edits or over-compromise on navigation to avoid having to use a higher-level CMS. Anyway, Mergician is the beginning of a truly minimalist CMS.
 
+Installation
+------------
+
+From a Git work tree:
+
+```sh
+go test -v ./...
+go install
+```
+
+From anywhere:
+
+```sh
+go get github.com/rcrowley/mergician
+```
+
 Usage
 -----
 
