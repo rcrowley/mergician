@@ -6,8 +6,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/rcrowley/mergician/html"
+	"github.com/rcrowley/mergician/markdown"
 )
 
 func init() {
@@ -51,9 +53,14 @@ func parse(pathnames []string) (in []*html.Node, err error) {
 	for i, pathname := range pathnames {
 
 		if ext := filepath.Ext(pathname); ext == ".md" {
-			// TODO render the HTML and hash to disk
-			// TODO hashPathname := filepath.Join(filepath.Dir(pathname), fmt.Sprintf(".%s.hash", strings.TrimSuffix(filepath.Base(pathname), ext)))
-			// TODO pathname = fmt.Sprintf("%s.html", strings.TrimSuffix(pathname, ext))
+			d, err := markdown.ParseFile(pathname)
+			if err != nil {
+				return nil, err
+			}
+			pathname = fmt.Sprintf("%s.html", strings.TrimSuffix(pathname, ext))
+			if err := markdown.RenderFile(pathname, d); err != nil {
+				return nil, err
+			}
 		}
 
 		if in[i], err = html.ParseFile(pathname); err != nil {

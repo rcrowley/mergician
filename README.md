@@ -128,3 +128,21 @@ As a teaser, here are some configurations and invocations that might power parts
     * Email: `mergician email-template.html example.html`
 
 Don't let this imply that the CMS will be a shell program, though. I'm sure it will be a high-level Go program and it will use Mergician's configuration and merge algorithms heavily.
+
+Markdown
+--------
+
+Many kinds of content can be written as Markdown, rendered to HTML, and then merged with other HTML. I imagine almost every document will at least begin in this form (or in Google Docs, imagining a future that could see imports from Google Docs) before being rendered to HTML. It's easy to read and write Markdown, after all.
+
+Some documents, though, will need to be edited further after being rendered to HTML. In order to ensure Markdown edits don't overwrite HTML edits, the pipeline must follow this algorithm:
+
+1. Replace `.md` with `.html` at the end of the document's filename.
+2. If the HTML filename (1) exists, hash its contents.
+3. If the HTML filename (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
+4. If hashes (2) and (3) both exist and do not match, exit with an error to preserve the edited HTML.
+5. If hash (2) exists but hash (3) doesn't, warn and continue.
+6. Render the Markdown to HTML.
+7. Redo hash (2) and write it to hash (3).
+8. Then merge the HTML with other HTML, etc.
+
+It sure would be cool to use `xattr`(7) or something fancy for this but we've got to accommodate version control, Windows, and shenanigans.
