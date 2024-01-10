@@ -39,12 +39,7 @@ func main() {
 	if *output == "-" {
 		err = html.Print(out)
 	} else {
-		f, err := os.Create(*output)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		err = html.Render(f, out)
+		err = html.RenderFile(*output, out)
 	}
 	if err != nil {
 		log.Fatal(err)

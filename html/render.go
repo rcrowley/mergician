@@ -23,6 +23,17 @@ func Render(w io.Writer, n *Node) error {
 	return err
 }
 
+// RenderFile writes an HTML document to a file, overwriting if the file
+// already exists.
+func RenderFile(pathname string, n *Node) error {
+	f, err := os.Create(pathname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return Render(f, n)
+}
+
 // String renders the *Node to a string and returns it. In case of error,
 // the return value is the error string instead. If handling this error
 // is important to you, use Render instead.
