@@ -17,8 +17,23 @@ func Print(d *Document) error {
 
 // Render renders the *Markdown to HTML and writes it to the io.Writer.
 func Render(w io.Writer, d *Document) error {
-	_, err := w.Write(d.Bytes())
-	return err
+	if _, err := w.Write([]byte(`<!DOCTYPE html>
+<html lang="en">
+<body>
+<article>
+`)); err != nil {
+		return err
+	}
+	if _, err := w.Write(d.Bytes()); err != nil {
+		return err
+	}
+	if _, err := w.Write([]byte(`</article>
+</body>
+</html>
+`)); err != nil {
+		return err
+	}
+	return nil
 }
 
 // RenderFile renders a Markdown document to HTML and writes it to a file,

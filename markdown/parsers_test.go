@@ -7,7 +7,7 @@ func TestParseFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if String(d) != "<h1>Hello, world!</h1>\n<p>Lovely day for a test, isn't it?</p>\n" {
-		t.Fatalf("%#v", String(d))
+	if d.String() != "<h1>Hello, world!</h1>\n<p>Lovely day for a test, isn&rsquo;t it?</p>\n" {
+		t.Fatalf("%#v", d.String()) // d.String() only works because type Document = bytes.Buffer
 	}
 }

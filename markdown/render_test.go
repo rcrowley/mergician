@@ -35,4 +35,6 @@ func TestRenderFile(t *testing.T) {
 		t.Fatal("expected error")
 	}
 
+	// TODO assertion on the contents of test.html
+
 }
