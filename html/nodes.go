@@ -7,6 +7,16 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+const (
+	CommentNode  = html.CommentNode
+	DoctypeNode  = html.DoctypeNode
+	DocumentNode = html.DocumentNode
+	ElementNode  = html.ElementNode
+	ErrorNode    = html.ErrorNode
+	RawNode      = html.RawNode
+	TextNode     = html.TextNode
+)
+
 type Node = html.Node
 
 func NewNode(tag atom.Atom, attr ...string) (n *Node) {
@@ -27,7 +37,7 @@ func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 	return
 }
 
-func nodeTypeString(t html.NodeType) string {
+func NodeTypeString(t html.NodeType) string {
 	switch t {
 	case html.CommentNode:
 		return "CommentNode"

@@ -13,7 +13,7 @@ func TestParseFile(t *testing.T) {
 	}
 	printNodeAsTree(t, n, "")
 	if n.Type != html.DocumentNode {
-		t.Fatal(nodeTypeString(n.Type))
+		t.Fatal(NodeTypeString(n.Type))
 	}
 }
 
