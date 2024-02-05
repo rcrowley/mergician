@@ -1,6 +1,8 @@
 package markdown
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"testing"
 )
@@ -12,10 +14,10 @@ func TestRenderFile(t *testing.T) {
 	}
 
 	// No HTML or hash files in the way.
-	if err := os.Remove("test.html"); err != nil {
+	if err := os.Remove("test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if err := os.Remove(".test.html.sha256"); err != nil {
+	if err := os.Remove(".test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
 	if err := RenderFile("test.html", d); err != nil {

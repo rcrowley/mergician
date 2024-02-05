@@ -29,7 +29,7 @@ func TestParseMergeMarkdown(t *testing.T) {
 	if err := os.Remove("markdown/test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if err := os.Remove("markdown/.test.html.sha256"); err != nil && errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("markdown/.test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
 
