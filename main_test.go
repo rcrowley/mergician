@@ -26,14 +26,14 @@ func TestParseMergeMarkdown(t *testing.T) {
 
 	// Remove the HTML and hash files. We're cheating and reusing a file from
 	// another test and this ensures we don't encounter conflicts.
-	if err := os.Remove("markdown/test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if err := os.Remove("markdown/.test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove(".test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
 
-	pathnames := []string{"html/template.html", "markdown/test.md"}
+	pathnames := []string{"html/template.html", "test.md"}
 	in, err := parse(pathnames)
 	if err != nil {
 		t.Fatal(err)
