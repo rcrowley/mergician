@@ -17,7 +17,10 @@ const (
 	TextNode     = html.TextNode
 )
 
-type Node = html.Node
+type (
+	Attribute = html.Attribute
+	Node      = html.Node
+)
 
 func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 	n = &Node{
