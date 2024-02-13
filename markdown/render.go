@@ -17,14 +17,27 @@ func Print(d *Document) error {
 
 // Render renders the *Markdown to HTML and writes it to the io.Writer.
 func Render(w io.Writer, d *Document) error {
+	b := d.Bytes()
 	if _, err := w.Write([]byte(`<!DOCTYPE html>
 <html lang="en">
+<head>
+<title>`)); err != nil {
+		return err
+	}
+	if _, err := w.Write(bytes.TrimSpace(bytes.TrimPrefix(
+		bytes.SplitN(b, []byte{'\n'}, 2)[0], // the first line of the Markdown document becomes the <title>
+		[]byte{'#'},                         // trim a leading '#' // TODO perhaps trip any number of leading '#'
+	))); err != nil {
+		return err
+	}
+	if _, err := w.Write([]byte(`</title>
+</head>
 <body>
 <article>
 `)); err != nil {
 		return err
 	}
-	if _, err := w.Write(d.Bytes()); err != nil {
+	if _, err := w.Write(b); err != nil {
 		return err
 	}
 	if _, err := w.Write([]byte(`</article>
