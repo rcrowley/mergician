@@ -23,6 +23,16 @@ func TestText(t *testing.T) {
 	//t.Log(jsonString(text))
 }
 
+func TestTextString(t *testing.T) {
+	n, err := ParseFile("article.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if s := Text(n).String(); s != "My cool webpage Things Stuff" {
+		t.Fatalf("%#v", s)
+	}
+}
+
 func jsonString(document any) string {
 	b, err := json.MarshalIndent(document, "", "\t")
 	if err != nil {

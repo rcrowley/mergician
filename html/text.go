@@ -1,7 +1,6 @@
 package html
 
 import (
-	"encoding/json"
 	"strings"
 )
 
@@ -28,9 +27,14 @@ func Text(in *Node) (out TextOnlyNode) {
 }
 
 func (n TextOnlyNode) String() string {
-	b, err := json.MarshalIndent(n, "", "\t")
-	if err != nil {
-		panic(err)
+	var ss []string
+	if n.Text != "" {
+		ss = append(ss, n.Text)
 	}
-	return string(b)
+	for _, n := range n.Nodes {
+		if s := n.String(); s != "" {
+			ss = append(ss, s)
+		}
+	}
+	return strings.Join(ss, " ")
 }
