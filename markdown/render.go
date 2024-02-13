@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/rcrowley/mergician/html"
 )
 
 // Print serializes and prints the *Markdown to standard output.
@@ -24,12 +26,15 @@ func Render(w io.Writer, d *Document) error {
 <title>`)); err != nil {
 		return err
 	}
-	if _, err := w.Write(bytes.TrimSpace(bytes.TrimPrefix(
-		bytes.SplitN(b, []byte{'\n'}, 2)[0], // the first line of the Markdown document becomes the <title>
-		[]byte{'#'},                         // trim a leading '#' // TODO perhaps trip any number of leading '#'
-	))); err != nil {
+
+	n, err := html.Parse(d)
+	if err != nil {
 		return err
 	}
+	if _, err := w.Write([]byte(html.FirstH1(n))); err != nil {
+		return err
+	}
+
 	if _, err := w.Write([]byte(`</title>
 </head>
 <body>
@@ -37,9 +42,11 @@ func Render(w io.Writer, d *Document) error {
 `)); err != nil {
 		return err
 	}
+
 	if _, err := w.Write(b); err != nil {
 		return err
 	}
+
 	if _, err := w.Write([]byte(`</article>
 </body>
 </html>

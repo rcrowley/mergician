@@ -19,7 +19,36 @@ func TestParseMergeHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%#v", html.String(out)) // TODO assertions
+
+	actual := html.String(out)
+	expected := `<!DOCTYPE html><html lang="en"><head>
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>My cool webpage — Website</title>
+
+<link href="template.css" rel="stylesheet"/>
+
+</head>
+<body>
+<header><h1>Website</h1></header>
+<br/><!-- explicit self-closing -->
+<article class="body">
+<h1>Things</h1>
+<p>Stuff</p>
+
+
+</article>
+<br/><!-- implied self-closing -->
+<footer><p>© 2023</p></footer>
+
+
+</body></html>`
+	if actual != expected {
+		t.Fatalf("actual: %s != expected: %s", actual, expected)
+	}
+
+	//t.Log(html.String(out))
 }
 
 func TestParseMergeMarkdown(t *testing.T) {
@@ -42,5 +71,35 @@ func TestParseMergeMarkdown(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%#v", html.String(out)) // TODO assertions
+
+	actual := html.String(out)
+	expected := `<!DOCTYPE html><html lang="en"><head>
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Hello, world! — Website</title>
+
+
+</head>
+<body>
+<header><h1>Website</h1></header>
+<br/><!-- explicit self-closing -->
+<article class="body">
+<article>
+<h1>Hello, world!</h1>
+<p>Lovely day for a test, isn’t it?</p>
+</article>
+
+
+</article>
+<br/><!-- implied self-closing -->
+<footer><p>© 2023</p></footer>
+
+
+</body></html>`
+	if actual != expected {
+		t.Fatalf("actual: %s != expected: %s", actual, expected)
+	}
+
+	//t.Log(html.String(out))
 }
