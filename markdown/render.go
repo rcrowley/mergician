@@ -23,6 +23,7 @@ func Render(w io.Writer, d *Document) error {
 	if _, err := w.Write([]byte(`<!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="utf-8">
 <title>`)); err != nil {
 		return err
 	}
