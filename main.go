@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,23 +30,40 @@ func main() {
 	if flag.NArg() == 0 {
 		log.Fatal("need at least one input HTML or Markdown file")
 	}
-	in, err := parse(flag.Args())
-	if err != nil {
-		log.Fatal(err)
-	}
-	out, err := html.Merge(in, html.DefaultRules())
-	if err != nil {
-		log.Fatal(err)
+	in := must2(parse(flag.Args()))
+
+	// Short-circuit if we've only been given one argument. We check this after
+	// the call to parse() for the side-effect of parse() rendering Markdown to
+	// HTML. If there's only one file, though, let's not try to merge it with
+	// nothing, which will superficially change the HTML and change the hashes
+	// stored alongside the HTML rendered from Markdown.
+	if flag.NArg() == 1 {
+		if *output == "-" {
+			f := must2(os.Open(fmt.Sprintf("%s.html", strings.TrimSuffix(flag.Arg(0), filepath.Ext(flag.Arg(0))))))
+			defer f.Close()
+			must2(io.Copy(os.Stdout, f))
+		}
+		return
 	}
 
+	out := must2(html.Merge(in, html.DefaultRules()))
+
 	if *output == "-" {
-		err = html.Print(out)
+		must(html.Print(out))
 	} else {
-		err = html.RenderFile(*output, out)
+		must(html.RenderFile(*output, out))
 	}
+}
+
+func must(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func must2[T any](v T, err error) T {
+	must(err)
+	return v
 }
 
 func parse(pathnames []string) (in []*html.Node, err error) {
