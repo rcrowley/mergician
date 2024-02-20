@@ -43,13 +43,13 @@ func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 	n = &Node{
 		DataAtom: tag,
 		Data:     tag.String(),
-		Type:     html.ElementNode,
+		Type:     ElementNode,
 	}
 	if len(attr)%2 != 0 {
 		panic(fmt.Sprintf("attribute key given without a value: %v", attr))
 	}
 	for i := 0; i < len(attr); i += 2 {
-		n.Attr = append(n.Attr, html.Attribute{
+		n.Attr = append(n.Attr, Attribute{
 			Key: attr[i],
 			Val: attr[i+1],
 		})
@@ -59,19 +59,19 @@ func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 
 func NodeTypeString(t html.NodeType) string {
 	switch t {
-	case html.CommentNode:
+	case CommentNode:
 		return "CommentNode"
-	case html.DoctypeNode:
+	case DoctypeNode:
 		return "DoctypeNode"
-	case html.DocumentNode:
+	case DocumentNode:
 		return "DocumentNode"
-	case html.ElementNode:
+	case ElementNode:
 		return "ElementNode"
-	case html.ErrorNode:
+	case ErrorNode:
 		return "ErrorNode"
-	case html.RawNode:
+	case RawNode:
 		return "RawNode"
-	case html.TextNode:
+	case TextNode:
 		return "TextNode"
 	default:
 		return fmt.Sprint(t)
