@@ -22,6 +22,23 @@ type (
 	Node      = html.Node
 )
 
+func CopyNode(in *Node) (out *Node) {
+	out = &Node{
+		Attr:      make([]Attribute, len(in.Attr)),
+		DataAtom:  in.DataAtom,
+		Data:      in.Data,
+		Namespace: in.Namespace,
+		Type:      in.Type,
+	}
+	for i := 0; i < len(in.Attr); i++ {
+		out.Attr[i] = in.Attr[i]
+	}
+	for n := in.FirstChild; n != nil; n = n.NextSibling {
+		out.AppendChild(CopyNode(n))
+	}
+	return
+}
+
 func NewNode(tag atom.Atom, attr ...string) (n *Node) {
 	n = &Node{
 		DataAtom: tag,

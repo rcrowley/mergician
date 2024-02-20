@@ -3,6 +3,7 @@ package html
 import (
 	"bytes"
 	"io"
+	"log"
 	"os"
 
 	"golang.org/x/net/html"
@@ -39,9 +40,27 @@ func RenderFile(pathname string, n *Node) error {
 // is important to you, use Render instead.
 func String(n *Node) string {
 	var b bytes.Buffer
-	err := html.Render(&b, n)
+	err := Render(&b, n)
 	if err != nil {
 		return err.Error()
 	}
 	return b.String()
+}
+
+func printNodeAsTree(n *Node, indent string) {
+	switch n.Type {
+	case html.ElementNode:
+		log.Printf("%s<%s>\n", indent, n.DataAtom) // TODO n.Attr
+	case html.TextNode:
+		log.Printf("%s%q\n", indent, n.Data)
+	default:
+		log.Printf("%s%s %+v\n", indent, NodeTypeString(n.Type), n)
+	}
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		printNodeAsTree(child, indent+"\t")
+	}
+	switch n.Type {
+	case html.ElementNode:
+		log.Printf("%s</%s>\n", indent, n.DataAtom)
+	}
 }

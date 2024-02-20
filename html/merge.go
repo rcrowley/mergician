@@ -15,7 +15,7 @@ func Merge(in []*Node, rules []Rule) (*Node, error) {
 	if len(in) == 0 {
 		panic("html.Merge called with zero inputs")
 	}
-	out := copyNode(in[0])
+	out := CopyNode(in[0])
 	if len(in) == 1 {
 		return out, nil
 	}
@@ -36,23 +36,6 @@ func sprintfMergeError(format string, args ...interface{}) error {
 
 func (err MergeError) Error() string { return string(err) }
 
-func copyNode(in *Node) (out *Node) {
-	out = &Node{
-		Attr:      make([]html.Attribute, len(in.Attr)),
-		DataAtom:  in.DataAtom,
-		Data:      in.Data,
-		Namespace: in.Namespace,
-		Type:      in.Type,
-	}
-	for i := 0; i < len(in.Attr); i++ {
-		out.Attr[i] = in.Attr[i]
-	}
-	for n := in.FirstChild; n != nil; n = n.NextSibling {
-		out.AppendChild(copyNode(n))
-	}
-	return
-}
-
 func merge(dst, src *Node, rules []Rule) error {
 
 	// <title> is special and I'm not sure what syntax to offer to expose it.
@@ -63,7 +46,7 @@ func merge(dst, src *Node, rules []Rule) error {
 					Data: " \u2014 ", // " &mdash; " but literal
 					Type: html.TextNode,
 				}, dst.FirstChild)
-				dst.InsertBefore(copyNode(n), dst.FirstChild)
+				dst.InsertBefore(CopyNode(n), dst.FirstChild)
 			}
 		}
 	}
@@ -75,7 +58,7 @@ func merge(dst, src *Node, rules []Rule) error {
 		if srcHead := Find(src, IsAtom(atom.Head)); srcHead != nil {
 			for n := srcHead.FirstChild; n != nil; n = n.NextSibling {
 				if !IsAtom(atom.Title)(n) {
-					dst.AppendChild(copyNode(n))
+					dst.AppendChild(CopyNode(n))
 				}
 			}
 		}
@@ -87,7 +70,7 @@ func merge(dst, src *Node, rules []Rule) error {
 		if srcBody := Find(src, IsAtom(atom.Body)); srcBody != nil {
 			dst.FirstChild, dst.LastChild = nil, nil
 			for n := srcBody.FirstChild; n != nil; n = n.NextSibling {
-				dst.AppendChild(copyNode(n))
+				dst.AppendChild(CopyNode(n))
 			}
 		}
 	}
