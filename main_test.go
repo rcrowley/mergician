@@ -96,7 +96,7 @@ func TestParseMergeMarkdown(t *testing.T) {
 <footer><p>© 2023</p></footer>
 
 
-</body></html>`
+</body></html>` // TODO <article>-in-<article> is weird but user-controlled so ¯\_(ツ)_/¯
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}

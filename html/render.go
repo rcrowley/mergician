@@ -17,7 +17,7 @@ func Print(n *Node) error {
 // Render is almost an alias for x/net/html's Render function but ensures
 // files end with a trailing '\n' character.
 func Render(w io.Writer, n *Node) error {
-	if err := html.Render(w, n); err != nil {
+	if err := html.Render(w, n); err != nil { // TODO make it stop with the XML-style self-closing tags; I hate that
 		return err
 	}
 	_, err := w.Write([]byte{'\n'})
