@@ -27,7 +27,7 @@ mergician [-o <output>] <input>[...]
 ```
 
 * `-o <output>`: write to this file instead of standard output
-* `<input>[...]`:  pathname to one or more input HTML files
+* `<input>[...]`: pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
 
 Example
 -------
