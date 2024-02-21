@@ -3,6 +3,7 @@ package html
 import (
 	"io"
 	"os"
+	"path/filepath"
 
 	"golang.org/x/net/html"
 )
@@ -19,6 +20,13 @@ func Parse(r io.Reader) (*Node, error) {
 // file descriptor, and returns the parsed HTML document. In case of error,
 // a nil *Node is returned along with the error.
 func ParseFile(pathname string) (*Node, error) {
+
+	// Detect and descend into Google Docs' HTML-in-zip format.
+	// TODO also support EPUB files
+	if ext := filepath.Ext(pathname); ext == ".zip" {
+		return Google(pathname)
+	}
+
 	f, err := os.Open(pathname)
 	if err != nil {
 		return nil, err

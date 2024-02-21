@@ -22,13 +22,13 @@ func main() {
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, `Usage: mergician [-o <output>] <input>[...]
   -o <output>   write to this file instead of standard output
-  <input>[...]  pathname to one or more input HTML or Markdown files
+  <input>[...]  pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
 `)
 	}
 	flag.Parse()
 
 	if flag.NArg() == 0 {
-		log.Fatal("need at least one input HTML or Markdown file")
+		log.Fatal("need at least one input HTML, Markdown, or Google Doc HTML-in-zip file")
 	}
 	in := must2(parse(flag.Args()))
 
