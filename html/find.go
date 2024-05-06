@@ -41,3 +41,26 @@ func IsAtom(atoms ...atom.Atom) func(*Node) bool {
 		return false
 	}
 }
+
+func Match(pattern *Node) func(*Node) bool {
+	isAtom := IsAtom(pattern.DataAtom)
+	hasAttrs := make([]func(*Node) bool, len(pattern.Attr))
+	for i, attr := range pattern.Attr {
+		hasAttrs[i] = HasAttr(attr.Key, attr.Val)
+	}
+
+	return func(n *Node) bool {
+		if n.Type != html.ElementNode {
+			return false
+		}
+		if !isAtom(n) {
+			return false
+		}
+		for _, hasAttr := range hasAttrs {
+			if !hasAttr(n) {
+				return false
+			}
+		}
+		return true
+	}
+}
