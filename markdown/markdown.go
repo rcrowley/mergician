@@ -11,5 +11,6 @@ func markdown() goldmark.Markdown {
 		goldmark.WithExtensions(extension.Typographer),
 		goldmark.WithRendererOptions(html.WithUnsafe()),
 		// TODO <https://github.com/yuin/goldmark-highlighting>
+		// TODO my own extension to prevent widows with &nbsp;
 	)
 }
