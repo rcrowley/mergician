@@ -117,7 +117,7 @@ func RenderFile(pathname string, d *Document) error {
 // the return value is the error string instead. If handling this error
 // is important to you, use Render instead.
 func String(d *Document) string {
-	return d.String()
+	return d.String() // TODO wrap this string in the same complete HTML document as in Render
 }
 
 func exists(pathname string) bool {
