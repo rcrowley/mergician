@@ -9,7 +9,7 @@ import (
 func TestDefaultRules(t *testing.T) {
 	rules := DefaultRules()
 	for _, rule := range rules {
-		t.Log(rule)
+		_ = rule // t.Log(rule)
 	}
 }
 

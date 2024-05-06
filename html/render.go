@@ -48,6 +48,7 @@ func String(n *Node) string {
 }
 
 func printNodeAsTree(n *Node, indent string) {
+	return
 	switch n.Type {
 	case html.ElementNode:
 		log.Printf("%s<%s>\n", indent, n.DataAtom) // TODO n.Attr
