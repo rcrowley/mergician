@@ -64,18 +64,17 @@ func merge(dst, src *Node, rules []Rule) error {
 		}
 	}
 
-	// <article class="body"> = <body>, <div class="body"> = <body>, and
-	// <section class="body"> = <body>, which is actually what this does.
-	if IsAtom(atom.Article, atom.Div, atom.Section)(dst) && HasAttr("class", "body")(dst) {
-		if srcBody := Find(src, IsAtom(atom.Body)); srcBody != nil {
-			dst.FirstChild, dst.LastChild = nil, nil
-			for n := srcBody.FirstChild; n != nil; n = n.NextSibling {
-				dst.AppendChild(CopyNode(n))
+	for _, rule := range rules {
+		if Match(rule.Dst)(dst) {
+			if srcBody := Find(src, Match(rule.Src)); srcBody != nil {
+				// TODO this is rule.Op == "="; need to support rule.Op == "+=", too
+				dst.FirstChild, dst.LastChild = nil, nil
+				for n := srcBody.FirstChild; n != nil; n = n.NextSibling {
+					dst.AppendChild(CopyNode(n))
+				}
 			}
 		}
 	}
-
-	// TODO for _, rule := range rules {}
 
 	// TODO suppress merging a "\n" text node immediately after another "\n" text node
 
