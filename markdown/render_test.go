@@ -16,6 +16,7 @@ func TestRenderFile(t *testing.T) {
 	expected := `<!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="utf-8">
 <title>Hello, world!</title>
 </head>
 <body>
