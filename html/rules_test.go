@@ -13,6 +13,16 @@ func TestDefaultRules(t *testing.T) {
 	}
 }
 
+func TestParseRule(t *testing.T) {
+	for _, s := range []string{
+		`<div class="body"> = <body>`,
+	} {
+		if rule, err := ParseRule(s); err != nil || rule.String() != s {
+			t.Fatal(rule, s, err)
+		}
+	}
+}
+
 func TestRuleString(t *testing.T) {
 	rule := Rule{NewNode(atom.Div, "class", "body"), "=", NewNode(atom.Body)}
 	if rule.String() != `<div class="body"> = <body>` {

@@ -19,9 +19,18 @@ func init() {
 
 func main() {
 	output := flag.String("o", "-", "write to this file instead of standard output")
+	var rules []html.Rule
+	flag.Var(html.RuleSlice(rules), "r", "use a custom rule for merging inputs (overrides all defaults; may be repeated)")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, `Usage: mergician [-o <output>] <input>[...]
+		fmt.Fprint(os.Stderr, `Usage: mergician [-o <output>] [-r <rule>[...]] <input>[...]
   -o <output>   write to this file instead of standard output
+  -r <rule>     use a custom rule for merging inputs (overrides all defaults;
+                may be repeated)
+                each rule is a destination HTML tag with optional attributes,
+                "=" or "+=", and a source HTML tag with optional attributes
+                default rules: <article class="body"> = <body>
+                               <div class="body"> = <body>
+                               <section class="body"> = <body>
   <input>[...]  pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
 `)
 	}
@@ -46,7 +55,11 @@ func main() {
 		return
 	}
 
-	out := must2(html.Merge(in, html.DefaultRules()))
+	if len(rules) == 0 {
+		rules = html.DefaultRules()
+	}
+
+	out := must2(html.Merge(in, rules))
 
 	if *output == "-" {
 		must(html.Print(out))

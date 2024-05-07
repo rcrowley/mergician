@@ -24,6 +24,11 @@ type Rule struct {
 	Src *Node
 }
 
+func ParseRule(s string) (r Rule, err error) {
+	panic("not implemented")
+	return
+}
+
 func (r Rule) String() string {
 	return fmt.Sprintf(
 		"%s %s %s",
@@ -42,4 +47,35 @@ func nodeStringForRule(n *Node) string {
 	}
 	ss[len(n.Attr)+2] = ">"
 	return strings.Join(ss, "")
+}
+
+type ruleSlice []Rule
+
+func RuleSlice(rules []Rule) *ruleSlice {
+	rs := ruleSlice(rules)
+	return &rs
+}
+
+func (rs *ruleSlice) Len() int {
+	if rs == nil || *rs == nil {
+		return 0
+	}
+	return len(*rs)
+}
+
+func (rs *ruleSlice) Set(s string) error {
+	r, err := ParseRule(s)
+	if err != nil {
+		return err
+	}
+	*rs = append(*rs, r)
+	return nil
+}
+
+func (rs *ruleSlice) String() string {
+	ss := make([]string, len(*rs))
+	for i, r := range *rs {
+		ss[i] = r.String()
+	}
+	return strings.Join(ss, ", ")
 }
