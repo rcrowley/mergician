@@ -1,11 +1,14 @@
 package html
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 // Parse reads a complete HTML document from an io.Reader. It is the caller's
@@ -33,4 +36,31 @@ func ParseFile(pathname string) (*Node, error) {
 	}
 	defer f.Close()
 	return Parse(f)
+}
+
+// ParseString parses an HTML document fragment from a string. It is intended
+// to be used on <body> elements or fragments that can be contained within a
+// <body> element.
+func ParseString(s string) (*Node, error) {
+	n, err := html.Parse(strings.NewReader(""))
+	if err != nil {
+		panic(err)
+	}
+	nodes, err := html.ParseFragment(strings.NewReader(s), n.FirstChild.FirstChild.NextSibling)
+	if err != nil {
+		return nil, err
+	}
+	if len(nodes) == 0 {
+		nodes, err = html.ParseFragment(strings.NewReader(s), n.FirstChild)
+		if len(nodes) == 0 {
+			return nil, fmt.Errorf("parse error: %s", s)
+		}
+	}
+	for _, n := range nodes {
+		if IsAtom(atom.Head)(n) {
+			continue
+		}
+		return n, nil
+	}
+	return nil, fmt.Errorf("parse error: %s", s)
 }

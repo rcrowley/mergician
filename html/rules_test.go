@@ -15,7 +15,10 @@ func TestDefaultRules(t *testing.T) {
 
 func TestParseRule(t *testing.T) {
 	for _, s := range []string{
+		`<body> = <body>`,
 		`<div class="body"> = <body>`,
+		`<div class="body"> = <body class="body">`,
+		`<div class="body"> = <div class="body">`,
 	} {
 		if rule, err := ParseRule(s); err != nil || rule.String() != s {
 			t.Fatal(rule, s, err)

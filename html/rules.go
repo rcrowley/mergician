@@ -3,6 +3,7 @@ package html
 import (
 	"fmt"
 	"html"
+	"regexp"
 	"strings"
 
 	"golang.org/x/net/html/atom"
@@ -25,7 +26,22 @@ type Rule struct {
 }
 
 func ParseRule(s string) (r Rule, err error) {
-	panic("not implemented")
+	m := regexp.MustCompile(`^(<[^>]+>)\s*(\+?=)\s*(<[^>]+>)$`).FindStringSubmatch(s)
+	//log.Printf("%#v", m)
+	if len(m) != 4 {
+		err = RuleError(fmt.Sprintf("invalid rule: %s", s))
+		return
+	}
+	if r.Dst, err = ParseString(m[1]); err != nil {
+		return
+	}
+	//log.Print(String(r.Dst))
+	r.Op = m[2]
+	//log.Print(r.Op)
+	if r.Src, err = ParseString(m[3]); err != nil {
+		return
+	}
+	//log.Print(String(r.Src))
 	return
 }
 
@@ -36,6 +52,12 @@ func (r Rule) String() string {
 		r.Op,
 		nodeStringForRule(r.Src),
 	)
+}
+
+type RuleError string
+
+func (err RuleError) Error() string {
+	return string(err)
 }
 
 func nodeStringForRule(n *Node) string {
