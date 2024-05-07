@@ -16,8 +16,11 @@ func Print(n *Node) error {
 
 // Render is almost an alias for x/net/html's Render function but ensures
 // files end with a trailing '\n' character.
+//
+// TODO Make it stop with the XML-style self-closing tags; I hate that.
+// <https://cs.opensource.google/go/x/net/+/refs/tags/v0.24.0:html/render.go;l=180>
 func Render(w io.Writer, n *Node) error {
-	if err := html.Render(w, n); err != nil { // TODO make it stop with the XML-style self-closing tags; I hate that
+	if err := html.Render(w, n); err != nil {
 		return err
 	}
 	_, err := w.Write([]byte{'\n'})
