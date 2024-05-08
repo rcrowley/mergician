@@ -27,7 +27,7 @@ func TestParseMergeHTML(t *testing.T) {
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
 
-<link href="template.css" rel="stylesheet"/>
+
 
 </head>
 <body>
@@ -79,6 +79,7 @@ func TestParseMergeMarkdown(t *testing.T) {
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Hello, world! — Website</title>
+
 
 
 </head>

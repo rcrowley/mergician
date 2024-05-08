@@ -51,13 +51,23 @@ func merge(dst, src *Node, rules []Rule) error {
 		}
 	}
 
-	// <head> += <head>, except for <title>, which is ignored here.
-	// TODO dedupe <link> and <meta> tags so we don't
-	// TODO e.g. have two <meta charset="utf-8"> tags.
+	// <head> += <head>, except for <title>, which is ignored here, and
+	// duplicate <link> and <meta> tags.
 	if IsAtom(atom.Head)(dst) {
+		var dedupe []string
+		for n := dst.FirstChild; n != nil; n = n.NextSibling {
+			if IsAtom(atom.Link, atom.Meta)(n) { // tags to dedupe
+				dedupe, _ = InsertSorted(dedupe, String(n))
+			}
+		}
 		if srcHead := Find(src, IsAtom(atom.Head)); srcHead != nil {
 			for n := srcHead.FirstChild; n != nil; n = n.NextSibling {
-				if !IsAtom(atom.Title)(n) {
+				if IsAtom(atom.Link, atom.Meta)(n) { // tags to dedupe
+					var ok bool
+					if dedupe, ok = InsertSorted(dedupe, String(n)); ok {
+						dst.AppendChild(CopyNode(n))
+					}
+				} else if !IsAtom(atom.Title)(n) { // handled above
 					dst.AppendChild(CopyNode(n))
 				}
 			}

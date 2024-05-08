@@ -29,7 +29,7 @@ func TestMergeCustom(t *testing.T) {
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
 
-<link href="template.css" rel="stylesheet"/>
+
 
 </head>
 <body>
@@ -70,7 +70,7 @@ func TestMergeCustomEmpty(t *testing.T) {
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
 
-<link href="template.css" rel="stylesheet"/>
+
 
 </head>
 <body>
@@ -113,7 +113,7 @@ func TestMergeDefault(t *testing.T) {
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
 
-<link href="template.css" rel="stylesheet"/>
+
 
 </head>
 <body>
