@@ -38,8 +38,6 @@ func TestMergeCustom(t *testing.T) {
 <article class="body">Things</article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-
-
 </body></html>
 `
 	if actual != expected {
@@ -81,8 +79,6 @@ func TestMergeCustomEmpty(t *testing.T) {
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-
-
 </body></html>
 `
 	if actual != expected {
@@ -127,8 +123,6 @@ func TestMergeDefault(t *testing.T) {
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-
-
 </body></html>
 ` // TODO deal with the deranged whitespace the merge algorithm produces
 	if actual != expected {

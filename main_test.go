@@ -41,8 +41,6 @@ func TestParseMergeHTML(t *testing.T) {
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-
-
 </body></html>
 `
 	if actual != expected {
@@ -96,8 +94,6 @@ func TestParseMergeMarkdown(t *testing.T) {
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-
-
 </body></html>
 ` // TODO <article>-in-<article> is weird but user-controlled so ¯\_(ツ)_/¯
 	if actual != expected {

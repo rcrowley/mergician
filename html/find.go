@@ -1,6 +1,8 @@
 package html
 
 import (
+	"strings"
+
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
@@ -40,6 +42,10 @@ func IsAtom(atoms ...atom.Atom) func(*Node) bool {
 		}
 		return false
 	}
+}
+
+func IsWhitespace(n *Node) bool {
+	return n.Type == html.TextNode && len(strings.TrimSpace(n.Data)) == 0
 }
 
 func Match(pattern *Node) func(*Node) bool {

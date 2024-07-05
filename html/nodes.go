@@ -2,6 +2,7 @@ package html
 
 import (
 	"fmt"
+	"regexp"
 
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -34,7 +35,11 @@ func CopyNode(in *Node) (out *Node) {
 		out.Attr[i] = in.Attr[i]
 	}
 	for n := in.FirstChild; n != nil; n = n.NextSibling {
-		out.AppendChild(CopyNode(n))
+		tmp := CopyNode(n)
+		if IsWhitespace(tmp) {
+			tmp.Data = consecutiveNewlines.ReplaceAllString(tmp.Data, "\n")
+		}
+		out.AppendChild(tmp)
 	}
 	return
 }
@@ -77,3 +82,5 @@ func NodeTypeString(t html.NodeType) string {
 		return fmt.Sprint(t)
 	}
 }
+
+var consecutiveNewlines = regexp.MustCompile("\n\n+")
