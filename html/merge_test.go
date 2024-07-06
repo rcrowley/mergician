@@ -23,14 +23,13 @@ func TestMergeCustom(t *testing.T) {
 	}
 
 	actual := String(n)
-	expected := `<!DOCTYPE html><html lang="en"><head>
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
-
-
-
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -38,7 +37,8 @@ func TestMergeCustom(t *testing.T) {
 <article class="body">Things</article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-</body></html>
+</body>
+</html>
 `
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
@@ -62,14 +62,13 @@ func TestMergeCustomEmpty(t *testing.T) {
 	}
 
 	actual := String(n)
-	expected := `<!DOCTYPE html><html lang="en"><head>
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
-
-
-
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -79,7 +78,8 @@ func TestMergeCustomEmpty(t *testing.T) {
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-</body></html>
+</body>
+</html>
 `
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
@@ -103,14 +103,13 @@ func TestMergeDefault(t *testing.T) {
 	}
 
 	actual := String(n)
-	expected := `<!DOCTYPE html><html lang="en"><head>
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
-
-
-
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -118,12 +117,11 @@ func TestMergeDefault(t *testing.T) {
 <article class="body">
 <h1>Things</h1>
 <p>Stuff</p>
-
-
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-</body></html>
+</body>
+</html>
 ` // TODO deal with the deranged whitespace the merge algorithm produces
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)

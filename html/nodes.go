@@ -34,13 +34,14 @@ func CopyNode(in *Node) (out *Node) {
 	for i := 0; i < len(in.Attr); i++ {
 		out.Attr[i] = in.Attr[i]
 	}
-	for n := in.FirstChild; n != nil; n = n.NextSibling {
-		tmp := CopyNode(n)
-		if IsWhitespace(tmp) {
-			tmp.Data = consecutiveNewlines.ReplaceAllString(tmp.Data, "\n")
-		}
-		out.AppendChild(tmp)
+	if IsWhitespace(out) {
+		out.Data = consecutiveNewlines.ReplaceAllString(out.Data, "\n")
 	}
+	DebugNodeOpen(out)
+	for n := in.FirstChild; n != nil; n = n.NextSibling {
+		out.AppendChild(CopyNode(n))
+	}
+	DebugNodeClose(out)
 	return
 }
 

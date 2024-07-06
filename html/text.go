@@ -1,8 +1,13 @@
 package html
 
-import (
-	"strings"
-)
+import "strings"
+
+func NewTextNode(s string) *Node {
+	return &Node{
+		Data: s,
+		Type: TextNode,
+	}
+}
 
 // TextOnlyNode could be structured as a tree of linked lists, like the DOM,
 // but if we do that then the somewhat naive indexing libraries won't be able

@@ -21,14 +21,13 @@ func TestParseMergeHTML(t *testing.T) {
 	}
 
 	actual := html.String(out)
-	expected := `<!DOCTYPE html><html lang="en"><head>
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
-
-
-
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -36,12 +35,11 @@ func TestParseMergeHTML(t *testing.T) {
 <article class="body">
 <h1>Things</h1>
 <p>Stuff</p>
-
-
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-</body></html>
+</body>
+</html>
 `
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
@@ -72,14 +70,13 @@ func TestParseMergeMarkdown(t *testing.T) {
 	}
 
 	actual := html.String(out)
-	expected := `<!DOCTYPE html><html lang="en"><head>
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Hello, world! — Website</title>
-
-
-
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -89,12 +86,11 @@ func TestParseMergeMarkdown(t *testing.T) {
 <h1>Hello, world!</h1>
 <p>Lovely day for a test, isn’t it?</p>
 </article>
-
-
 </article>
 <br/><!-- implied self-closing -->
 <footer><p>© 2023</p></footer>
-</body></html>
+</body>
+</html>
 ` // TODO <article>-in-<article> is weird but user-controlled so ¯\_(ツ)_/¯
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
