@@ -73,15 +73,12 @@ func merge(dst, src *Node, rules []Rule) error {
 			}
 		}
 		if srcHead := Find(src, IsAtom(atom.Head)); srcHead != nil {
-			var skipNextSiblingWhitespaceNode bool
 			for n := srcHead.FirstChild; n != nil; n = n.NextSibling {
-				if skipNextSiblingWhitespaceNode {
-					skipNextSiblingWhitespaceNode = false
-					if IsWhitespace(n) {
-						Debugf("skipping next sibling whitespace node: %#v", n.Data)
-						continue
-					}
+				if n == srcHead.FirstChild && IsWhitespace(n) {
+					continue // assume we already have a "\n" within <head> from dst
 				}
+				var skipNextSiblingWhitespaceNode bool
+
 				if isLinkOrMeta(n) {
 					var ok bool
 					if dedupe, ok = InsertSorted(dedupe, String(n)); ok {
@@ -93,8 +90,13 @@ func merge(dst, src *Node, rules []Rule) error {
 				} else if IsAtom(atom.Title)(n) { // handled above
 					Debug("skipping already-handled <title> tag")
 					skipNextSiblingWhitespaceNode = true
-				} else if !IsWhitespace(n) {
+				} else {
 					dst.AppendChild(CopyNode(n))
+				}
+
+				if skipNextSiblingWhitespaceNode && n.NextSibling != nil && IsWhitespace(n.NextSibling) {
+					n = n.NextSibling
+					Debugf("skipping next sibling whitespace node: %#v", n.Data)
 				}
 			}
 		}
