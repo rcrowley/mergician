@@ -32,7 +32,7 @@ func Render(w io.Writer, d *Document) error {
 	if err != nil {
 		return err
 	}
-	if _, err := w.Write([]byte(html.FirstH1(n))); err != nil {
+	if _, err := w.Write([]byte(html.Text(html.FirstH1(n)).String())); err != nil {
 		return err
 	}
 

@@ -7,7 +7,7 @@ func TestExtractFirstParagraph(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if p := FirstParagraph(n); p != "Stuff" {
+	if p := Text(FirstParagraph(n)).String(); p != "Stuff" {
 		t.Fatalf("%#v", p)
 	}
 }
@@ -17,7 +17,7 @@ func TestExtractTitle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if title := Title(n); title != "My cool webpage" {
+	if title := Text(Title(n)).String(); title != "My cool webpage" {
 		t.Fatalf("%#v", title)
 	}
 }
