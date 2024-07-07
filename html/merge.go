@@ -55,10 +55,7 @@ func merge(dst, src *Node, rules []Rule) error {
 		Debug("processing <title>")
 		if srcTitle := Find(src, IsAtom(atom.Title)); srcTitle != nil {
 			for n := srcTitle.FirstChild; n != nil; n = n.NextSibling {
-				dst.InsertBefore(&Node{
-					Data: " \u2014 ", // " &mdash; " but literal
-					Type: html.TextNode,
-				}, dst.FirstChild)
+				dst.InsertBefore(NewTextNode(" \u2014 "), dst.FirstChild) // " &mdash; " but literal
 				dst.InsertBefore(CopyNode(n), dst.FirstChild)
 			}
 		}
