@@ -52,6 +52,7 @@ func merge(dst, src *Node, rules []Rule) error {
 
 	// <title> is special and I'm not sure what syntax to offer to expose it.
 	if IsAtom(atom.Title)(dst) {
+		Debug("processing <title>")
 		if srcTitle := Find(src, IsAtom(atom.Title)); srcTitle != nil {
 			for n := srcTitle.FirstChild; n != nil; n = n.NextSibling {
 				dst.InsertBefore(&Node{
@@ -66,6 +67,7 @@ func merge(dst, src *Node, rules []Rule) error {
 	// <head> += <head>, except for <title>, which is ignored here, and
 	// duplicate <link> and <meta> tags, which are deduplicated.
 	if IsAtom(atom.Head)(dst) {
+		Debug("processing <head>")
 		var dedupe []string
 		isLinkOrMeta := IsAtom(atom.Link, atom.Meta) // tags to dedupe
 		for n := dst.FirstChild; n != nil; n = n.NextSibling {
@@ -105,6 +107,7 @@ func merge(dst, src *Node, rules []Rule) error {
 	// for a source node that matches its corresponding r-value and copy
 	// it into place.
 	for _, rule := range rules {
+		//Debugf("processing %v", rule)
 		if Match(rule.Dst)(dst) {
 			if srcBody := Find(src, Match(rule.Src)); srcBody != nil {
 
