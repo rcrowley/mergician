@@ -19,6 +19,9 @@ type TextOnlyNode struct {
 }
 
 func Text(in *Node) (out TextOnlyNode) {
+	if in == nil {
+		return // makes it safe to do Text(maybeNilNode()).String()
+	}
 	for i := in.FirstChild; i != nil; i = i.NextSibling {
 		o := Text(i)
 		if len(o.Nodes) > 0 || o.Text != "" {

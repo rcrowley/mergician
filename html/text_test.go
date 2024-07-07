@@ -33,6 +33,13 @@ func TestTextString(t *testing.T) {
 	}
 }
 
+func TestTextZero(t *testing.T) {
+	var text TextOnlyNode
+	if s := text.String(); s != "" { // really the test is that this doesn't panic
+		t.Fatalf("%#v", s)
+	}
+}
+
 func jsonString(document any) string {
 	b, err := json.MarshalIndent(document, "", "\t")
 	if err != nil {
