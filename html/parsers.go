@@ -56,15 +56,22 @@ func ParseFile(pathname string) (*Node, error) {
 	return Parse(f)
 }
 
-// ParseString parses an HTML document fragment from a string. It is intended
-// to be used on <body> elements or fragments that can be contained within a
-// <body> element. It does not work for full documents contained in strings.
-// For those cases, use Parse(strings.NewReader(s)).
+// ParseString parses an HTML document or document fragment from a string.
 func ParseString(s string) (*Node, error) {
+
+	// If this looks like a complete document, treat it like one.
+	if strings.HasPrefix(s, "<!") {
+		return Parse(strings.NewReader(s))
+	}
+
+	// Otherwise, create an empty document to use as context for parsing
+	// the fragment.
 	n, err := html.Parse(strings.NewReader(""))
 	if err != nil {
 		panic(err)
 	}
+
+	// Try a few different ways of finding the parent node in the fragment.
 	nodes, err := html.ParseFragment(strings.NewReader(s), n.FirstChild.FirstChild.NextSibling)
 	if err != nil {
 		return nil, err
@@ -81,6 +88,7 @@ func ParseString(s string) (*Node, error) {
 		}
 		return n, nil
 	}
+
 	return nil, fmt.Errorf("parse error: %s", s)
 }
 
