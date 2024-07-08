@@ -3,7 +3,6 @@ package html
 import (
 	"fmt"
 
-	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
 
@@ -40,15 +39,6 @@ func (err MergeError) Error() string { return string(err) }
 
 func merge(dst, src *Node, rules []Rule) error {
 	//Debugf("merging dst: %s %q, src: %s %q", NodeTypeString(dst.Type), dst.Data, NodeTypeString(src.Type), src.Data)
-
-	// Add a "\n" between <!DOCTYPE html> and <html>, after <html>, and after
-	// </body>, none of which for some reason are included by the parser
-	// despite definitely being present in the source files.
-	if dst.Type == html.ElementNode && dst.DataAtom == atom.Html {
-		dst.Parent.InsertBefore(NewTextNode("\n"), dst)     // between <!DOCTYPE html> and <html>
-		dst.InsertBefore(NewTextNode("\n"), dst.FirstChild) // after <html>
-		dst.AppendChild(NewTextNode("\n"))                  // after </body>
-	}
 
 	// <title> is special and I'm not sure what syntax to offer to expose it.
 	if IsAtom(atom.Title)(dst) {

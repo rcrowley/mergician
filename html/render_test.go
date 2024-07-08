@@ -19,17 +19,18 @@ func TestRenderFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := `<!DOCTYPE html><html><head>
+	expected := `<!DOCTYPE html>
+<html>
+<head>
 <link href="template.css" rel="stylesheet"/>
 <title>My cool webpage</title>
 </head>
 <body>
 <h1>Things</h1>
 <p>Stuff</p>
-
-
-</body></html>
-` // TODO deal with the deranged whitespace the merge algorithm produces
+</body>
+</html>
+`
 	if string(actual) != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}

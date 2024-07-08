@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -15,8 +16,25 @@ import (
 // responsibility to ensure the io.Reader is positioned at the beginning of
 // the document and to clean up (i.e. close file descriptors, etc.) afterwards.
 // Most callers will want to use ParseFile instead.
-func Parse(r io.Reader) (*Node, error) {
-	return html.Parse(r)
+func Parse(r io.Reader) (n *Node, err error) {
+	if n, err = html.Parse(r); err != nil {
+		return
+	}
+
+	// Be pendantic about the whitespace nodes that go into the parse tree so
+	// that we can be more easily pedantic about the HTML this renders later.
+	if n.Type == DocumentNode && n.FirstChild != nil && n.FirstChild.Type == DoctypeNode {
+		htmlNode := n.FirstChild.NextSibling
+		if htmlNode != nil && htmlNode.Type == ElementNode && htmlNode.DataAtom == atom.Html {
+			n.InsertBefore(NewTextNode("\n"), htmlNode)                   // between <!DOCTYPE html> and <html>
+			htmlNode.InsertBefore(NewTextNode("\n"), htmlNode.FirstChild) // between <html> and <head>
+			htmlNode.AppendChild(NewTextNode("\n"))                       // between </body> and </html>
+			n.AppendChild(NewTextNode("\n"))                              // after </html>
+		}
+	}
+	removeConsecutiveNewlines(n)
+
+	return
 }
 
 // ParseFile opens an HTML file, parses the document it contains, closes the
@@ -40,7 +58,8 @@ func ParseFile(pathname string) (*Node, error) {
 
 // ParseString parses an HTML document fragment from a string. It is intended
 // to be used on <body> elements or fragments that can be contained within a
-// <body> element.
+// <body> element. It does not work for full documents contained in strings.
+// For those cases, use Parse(strings.NewReader(s)).
 func ParseString(s string) (*Node, error) {
 	n, err := html.Parse(strings.NewReader(""))
 	if err != nil {
@@ -63,4 +82,15 @@ func ParseString(s string) (*Node, error) {
 		return n, nil
 	}
 	return nil, fmt.Errorf("parse error: %s", s)
+}
+
+var consecutiveNewlines = regexp.MustCompile("\n\n+")
+
+func removeConsecutiveNewlines(n *Node) {
+	if IsWhitespace(n) {
+		n.Data = consecutiveNewlines.ReplaceAllString(n.Data, "\n")
+	}
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		removeConsecutiveNewlines(child)
+	}
 }
