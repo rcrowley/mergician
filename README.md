@@ -1,48 +1,21 @@
 Mergician
 =========
 
-I like writing plain HTML. I like it so much more than using all the other tools I've used for making websites that I've been known to use `sed`(1) to make bulk edits or over-compromise on navigation to avoid having to use a higher-level CMS. Anyway, Mergician is the beginning of a truly minimalist CMS.
+HTML is the language of the Web but the Web has moved beyond the bare, unstyled Web of the '90s (and university professors). Visitors to your site expect coherent layouts, visual consistency, navigation. This is the point at which most folks reach for a templating language.
 
-Installation
-------------
+Mergician reimagines the often frustrating juxtaposition of HTML and templating language in pure HTML. Instead of rendering a template, merge a content HTML document into a template HTML document.
 
-From a Git work tree:
+For example, if you define two files:
 
-```sh
-go test -v ./...
-go install
-```
-
-From anywhere:
-
-```sh
-go get github.com/rcrowley/mergician
-```
-
-Usage
------
-
-```sh
-mergician [-o <output>] <input>[...]
-```
-
-* `-o <output>`: write to this file instead of standard output
-* `<input>[...]`: pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
-
-Example
--------
-
-Consider these inputs:
-
-`template.html`:
-
-```html
+| `template.html` | `article.html` |
+| --------------- | -------------- |
+| ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link href="template.css" rel="stylesheet">
-<meta charset="utf-8">
-<meta content="width=device-width,initial-scale=1" name="viewport">
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Website</title>
 </head>
 <body>
@@ -50,18 +23,14 @@ Consider these inputs:
 <br/>
 <article class="body"></article>
 <br/>
-<footer><p>&copy; 2023</p></footer>
+<footer><p>&copy; 2024</p></footer>
 </body>
 </html>
-```
-
-`article.html`:
-
-```html
+``` | ```html
 <!DOCTYPE html>
 <html>
 <head>
-<link href="template.css" rel="stylesheet">
+<link href="template.css" rel="stylesheet"/>
 <title>My cool webpage</title>
 </head>
 <body>
@@ -69,12 +38,20 @@ Consider these inputs:
 <p>Stuff</p>
 </body>
 </html>
+``` |
+
+And use Mergician to merge them together:
+
+```sh
+mergician template.html article.html
 ```
 
-`mergician template.html article.html` (so ordered to make `xargs`(1)-like invocations more natural) will combine the two and write the following to standard output:
+You get your article wrapped in your template:
 
 ```html
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
@@ -89,20 +66,85 @@ Consider these inputs:
 <p>Stuff</p>
 </article>
 <br/>
-<footer><p>© 2023</p></footer>
-</body></html>
+<footer><p>© 2024</p></footer>
+</body>
+</html>
+```
+
+Mergician uses Microformats-inspired (remember those?!) [rules](#rules) to control how HTML documents are merged. Every input is a complete, standalone HTML document that can be viewed and edited on its own, no template language artifacts anywhere.
+
+Installation
+------------
+
+```sh
+go get github.com/rcrowley/mergician
+```
+
+Usage
+-----
+
+```sh
+mergician [-o <output>] <input>[...]
+```
+
+* `-o <output>`: write to this file instead of standard output
+* `-r <rule>`: use a custom rule for merging inputs (overrides all defaults; may be repeated); each rule is a destination HTML tag with optional attributes, "=" or "+=", and a source HTML tag with optional attributes default rules:
+    * `<article class="body"> = <body>`
+    * `<div class="body"> = <body>`
+    * `<section class="body"> = <body>`
+* `<input>[...]`: pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
+
+Rules
+-----
+
+TODO
+
+### Default rules
+
+```
+<article class="body"> = <body>
+<div class="body"> = <body>
+<section class="body"> = <body>
 ```
 
 Merge algorithm
 ---------------
 
-Mergician merges the second HTML document it's given into the first, then the third into the first, and so on until all the documents are processed.
+Mergician merges the second HTML document it's given into the first, then the third into the merged first and second, and so on until all the documents are processed.
 
 For each pair of documents it merges, it follows these steps:
 
-1. Merge `<title>` tags by appending " / " and the second `<title>` tag's text to the first `<title>` tag's text. (TODO: If there is no first `<title>` tag, copy the second `<title>` tag in unchanged.)
-2. Merge `<head>` tags by appending all the children from the second `<head>` tag into the first.
-3. Merge `<body>` tags by appending all the children from the second `<body>` tag into the `<article class="body">`, `<div class="body">`, or `<section class="body">` in the first. (TODO: Extend this microformats-like structure as described below.)
+1. Merge `<title>` tags by appending " / " and the second `<title>` tag's text to the first `<title>` tag's text. (TODO: If there is no first `<title>` tag, copy the second `<title>` tag in unchanged. Also TODO: extend the [rules](#rules) to support customizing how the title text nodes are merged.)
+2. Merge `<head>` tags by appending all the unique children from the second `<head>` tag into the first.
+3. Iterate over the [rules](#rules) and, for each l-value matched in the first document and r-value matched in the second, replace (with `=`) or append to (with `+=`) the match in the first document with the content from the match in the second.
+
+Markdown
+--------
+
+Lots of documents will be written first in Markdown, rendered to HTML, and then merged with other HTML. Mergician supports this directly: If it's given a file with the extension `.md`, it will render the Markdown before continuing with the merge algorithm.
+
+In order to ensure subsequent edits to Markdown files don't overwrite edits made directly to the HTML files that were rendered from those Markdown files, Mergician processes Markdown files as follows:
+
+1. Replace `.md` with `.html` at the end of the document's filename.
+2. If the HTML filename (1) exists, hash its contents.
+3. If the HTML filename (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
+4. If hashes (2) and (3) both exist and do not match, exit with an error to preserve the edited HTML.
+5. If hash (2) exists but hash (3) doesn't, warn and continue.
+6. Render the Markdown to HTML.
+7. Redo hash (2) and write it to hash (3).
+8. Then merge the HTML with other HTML, etc.
+
+See also
+--------
+
+Mergician powers a whole suite of tools that manipulate HTML documents:
+
+* [`deadlinks`](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
+* [`electrostatic`](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
+* [`frag`](https://github.com/rcrowley/frag): Extract fragments of HTML documents
+* [`sitesearch`](https://github.com/rcrowley/sitesearch): Index a document root directory and serve queries to it in AWS Lambda
+
+----
 
 Configuration
 -------------
@@ -123,42 +165,3 @@ I think there's probably value (especially for some of the imagined CMS use-case
 <article class="body"> = <body> *                  # merge <body>'s children
 <section class="body"> += <section class="index"> # merge each <section class="index"> whole
 ```
-
-CMS
----
-
-The forthcoming CMS will build upon this merge algorithm to additionally support some or all of the features one might expect from a modern CMS.
-
-* Reverse-chronological index
-* Atom/RSS feeds
-* `sitemap.xml`
-* Lambda function invocation on publish (to e.g. send email to subscribers)
-
-As a teaser, here are some configurations and invocations that might power parts of the CMS:
-
-* Construct a reverse-chronological index:
-    * Configuration: `<section class="index"> += <h1>`
-    * Invocation: `mergician index.html newest.html ... oldest.html`
-* Render to both HTML for the Web and an HTML email:
-    * Web: `mergician article-template.html example.html`
-    * Email: `mergician email-template.html example.html`
-
-Don't let this imply that the CMS will be a shell program, though. I'm sure it will be a high-level Go program and it will use Mergician's configuration and merge algorithms heavily.
-
-Markdown
---------
-
-Many kinds of content can be written as Markdown, rendered to HTML, and then merged with other HTML. I imagine almost every document will at least begin in this form (or in Google Docs, imagining a future that could see imports from Google Docs) before being rendered to HTML. It's easy to read and write Markdown, after all.
-
-Some documents, though, will need to be edited further after being rendered to HTML. In order to ensure Markdown edits don't overwrite HTML edits, the pipeline must follow this algorithm:
-
-1. Replace `.md` with `.html` at the end of the document's filename.
-2. If the HTML filename (1) exists, hash its contents.
-3. If the HTML filename (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
-4. If hashes (2) and (3) both exist and do not match, exit with an error to preserve the edited HTML.
-5. If hash (2) exists but hash (3) doesn't, warn and continue.
-6. Render the Markdown to HTML.
-7. Redo hash (2) and write it to hash (3).
-8. Then merge the HTML with other HTML, etc.
-
-It sure would be cool to use `xattr`(7) or something fancy for this but we've got to accommodate version control, Windows, and shenanigans.
