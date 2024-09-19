@@ -7,9 +7,9 @@ Mergician reimagines the often frustrating juxtaposition of HTML and templating 
 
 For example, if you define two files:
 
-| `template.html` | `article.html` |
-| --------------- | -------------- |
-| ```html
+`template.html`:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,12 +21,16 @@ For example, if you define two files:
 <body>
 <header><h1>Website</h1></header>
 <br/>
-<article class="body"></article>
+<div class="body"></div>
 <br/>
 <footer><p>&copy; 2024</p></footer>
 </body>
 </html>
-``` | ```html
+```
+
+`webpage.html`:
+
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,15 +42,15 @@ For example, if you define two files:
 <p>Stuff</p>
 </body>
 </html>
-``` |
+```
 
 And use Mergician to merge them together:
 
 ```sh
-mergician template.html article.html
+mergician template.html webpage.html
 ```
 
-You get your article wrapped in your template:
+You get your webpage wrapped in your template:
 
 ```html
 <!DOCTYPE html>
@@ -55,16 +59,16 @@ You get your article wrapped in your template:
 <link href="template.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Website / My cool webpage</title>
+<title>My cool webpage — Website</title>
 <link href="template.css" rel="stylesheet"/>
 </head>
 <body>
 <header><h1>Website</h1></header>
 <br/>
-<article class="body">
+<div class="body">
 <h1>Things</h1>
 <p>Stuff</p>
-</article>
+</div>
 <br/>
 <footer><p>© 2024</p></footer>
 </body>
@@ -97,9 +101,11 @@ mergician [-o <output>] <input>[...]
 Rules
 -----
 
-TODO
+Mergician rules control how two HTML documents are merged. Each rule consists of an l-value, an operator, and an r-value. The l-value and r-value are each the opening half of an HTML tag, potentially including attributes. The operator is either `=` or `+=`.
 
-### Default rules
+Nodes in the second HTML document that match the r-value are copied into the first HTML document as children of nodes that match the l-value. The `=` operator replaces all the l-value's children. The `+=` operator appends to the l-value's children, which allows more complex results when passing more than two arguments to `mergician`.
+
+If no rules are given on the command-line, these defaults are used:
 
 ```
 <article class="body"> = <body>
@@ -134,6 +140,47 @@ In order to ensure subsequent edits to Markdown files don't overwrite edits made
 7. Redo hash (2) and write it to hash (3).
 8. Then merge the HTML with other HTML, etc.
 
+For example, taking `template.html` from above and `article.md`:
+
+```
+Hello, world!
+=============
+
+Hello, world!
+```
+
+We can again use Mergician to merge them together:
+
+```sh
+mergician template.html article.md
+```
+
+You get your article wrapped in your template:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Hello, world! — Website</title>
+</head>
+<body>
+<header><h1>Website</h1></header>
+<br/> 
+<div class="body">
+<article>
+<h1>Hello, world!</h1>
+<p>Hello, world!</p>
+</article>
+</div>
+<br/>
+<footer><p>© 2024</p></footer>
+</body>
+</html>
+```
+
 See also
 --------
 
@@ -143,25 +190,3 @@ Mergician powers a whole suite of tools that manipulate HTML documents:
 * [`electrostatic`](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
 * [`frag`](https://github.com/rcrowley/frag): Extract fragments of HTML documents
 * [`sitesearch`](https://github.com/rcrowley/sitesearch): Index a document root directory and serve queries to it in AWS Lambda
-
-----
-
-Configuration
--------------
-
-At present, the rules of the merge algorithm are fixed. However, I have a plan to expose the rules to reconfiguration to support other merge strategies and microformats. Here is how the default merge algorithm would be expressed in the configuration language:
-
-```
-<title> += " / " + <title>
-<head> += <head> - <title>
-<article class="body"> = <body>
-<div class="body"> = <body>
-<section class="body"> = <body>
-```
-
-I think there's probably value (especially for some of the imagined CMS use-cases below) to differentiate between merging in an element versus that element's children. For example, when merging HTML documents using this default configuration it's imperative to merge in the `<body>` tag's children since it's nonsense for a `<body>` tag to appear nested within another `<body>` tag, while when constructing a reverse-chronological index it might make more sense to keep the `<section class="index">` tags whole to provide some structural separation between each entry in the index. The syntax could look like this, which alludes to CSS (a plus) but also looks like a syntax error (when thinking in terms of r-values in most programming languages).
-
-```
-<article class="body"> = <body> *                  # merge <body>'s children
-<section class="body"> += <section class="index"> # merge each <section class="index"> whole
-```
