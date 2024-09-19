@@ -122,7 +122,7 @@ func TestMergeDefault(t *testing.T) {
 <footer><p>© 2023</p></footer>
 </body>
 </html>
-` // TODO deal with the deranged whitespace the merge algorithm produces
+`
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}
