@@ -7,6 +7,28 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+func All(funcs ...func(*Node) bool) func(*Node) bool {
+	return func(n *Node) bool {
+		for _, f := range funcs {
+			if !f(n) {
+				return false
+			}
+		}
+		return true
+	}
+}
+
+func Any(funcs ...func(*Node) bool) func(*Node) bool {
+	return func(n *Node) bool {
+		for _, f := range funcs {
+			if f(n) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
 func Find(n *Node, f func(*Node) bool) *Node {
 	if f(n) {
 		return n
@@ -17,6 +39,16 @@ func Find(n *Node, f func(*Node) bool) *Node {
 		}
 	}
 	return nil
+}
+
+func FindAll(n *Node, f func(*Node) bool) (found []*Node) {
+	if f(n) {
+		found = append(found, n)
+	}
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		found = append(found, FindAll(child, f)...) // XXX nil will probably blow up
+	}
+	return
 }
 
 func HasAttr(k, v string) func(*Node) bool {
