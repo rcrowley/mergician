@@ -64,29 +64,44 @@ func ParseString(s string) (*Node, error) {
 		return Parse(strings.NewReader(s))
 	}
 
-	// Otherwise, create an empty document to use as context for parsing
-	// the fragment.
-	n, err := html.Parse(strings.NewReader(""))
-	if err != nil {
-		panic(err)
-	}
-
-	// Try a few different ways of finding the parent node in the fragment.
-	nodes, err := html.ParseFragment(strings.NewReader(s), n.FirstChild.FirstChild.NextSibling)
+	// Otherwise, treat it as a fragment and try to find it in the document
+	// the parser builds around it.
+	nodes, err := html.ParseFragment(strings.NewReader(s), nil)
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		nodes, err = html.ParseFragment(strings.NewReader(s), n.FirstChild)
-		if len(nodes) == 0 {
-			return nil, fmt.Errorf("parse error: %s", s)
-		}
+		return nil, fmt.Errorf("parse error: %s", s)
 	}
-	for _, n := range nodes {
-		if IsAtom(atom.Head)(n) {
-			continue
-		}
-		return n, nil
+	if len(nodes) > 1 {
+		return nil, fmt.Errorf("fragment not rooted at one node: %s", s)
+	}
+	n := nodes[0]
+
+	// If we're literally looking for <head>, return it.
+	ok, err := regexp.MatchString("^<head[> ]", s)
+	if err != nil {
+		panic(err)
+	}
+	if ok {
+		return n.FirstChild, nil
+	}
+
+	// If we're literally looking for <body>, return it.
+	ok, err = regexp.MatchString("^<body[> ]", s)
+	if err != nil {
+		panic(err)
+	}
+	if ok {
+		return n.FirstChild.NextSibling, nil
+	}
+
+	// Otherwise, usually, we're looking for whatever node has been added to
+	// either the <head> or the <body> of the document the parser made up.
+	if n.FirstChild.FirstChild != nil {
+		return n.FirstChild.FirstChild, nil
+	} else if n.FirstChild.NextSibling.FirstChild != nil {
+		return n.FirstChild.NextSibling.FirstChild, nil
 	}
 
 	return nil, fmt.Errorf("parse error: %s", s)
