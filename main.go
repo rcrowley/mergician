@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/rcrowley/mergician/files"
 	"github.com/rcrowley/mergician/html"
-	"github.com/rcrowley/mergician/markdown"
 )
 
 func init() {
@@ -31,21 +31,20 @@ func main() {
                 default rules: <article class="body"> = <body>
                                <div class="body"> = <body>
                                <section class="body"> = <body>
-  <input>[...]  pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
+  <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip files
 `)
 	}
 	flag.Parse()
-
 	if flag.NArg() == 0 {
 		log.Fatal("need at least one input HTML, Markdown, or Google Doc HTML-in-zip file")
 	}
-	in := must2(parse(flag.Args()))
+	in := must2(files.ParseSlice(flag.Args()))
 
 	// Short-circuit if we've only been given one argument. We check this after
-	// the call to parse() for the side-effect of parse() rendering Markdown to
-	// HTML. If there's only one file, though, let's not try to merge it with
-	// nothing, which will superficially change the HTML and change the hashes
-	// stored alongside the HTML rendered from Markdown.
+	// the call to files.ParseSlice() for the side-effect of files.ParseSlice()
+	// rendering Markdown to HTML. If there's only one file, though, let's not
+	// try to merge it with nothing, which will superficially change the HTML
+	// and change the hashes stored alongside the HTML rendered from Markdown.
 	if flag.NArg() == 1 {
 		if *output == "-" {
 			f := must2(os.Open(fmt.Sprintf("%s.html", strings.TrimSuffix(flag.Arg(0), filepath.Ext(flag.Arg(0))))))
@@ -77,27 +76,4 @@ func must(err error) {
 func must2[T any](v T, err error) T {
 	must(err)
 	return v
-}
-
-func parse(pathnames []string) (in []*html.Node, err error) {
-	in = make([]*html.Node, len(pathnames))
-	for i, pathname := range pathnames {
-
-		if ext := filepath.Ext(pathname); ext == ".md" {
-			d, err := markdown.ParseFile(pathname)
-			if err != nil {
-				return nil, err
-			}
-			pathname = fmt.Sprintf("%s.html", strings.TrimSuffix(pathname, ext))
-			if err := markdown.RenderFile(pathname, d); err != nil {
-				return nil, err
-			}
-		}
-
-		if in[i], err = html.ParseFile(pathname); err != nil {
-			return nil, err
-		}
-
-	}
-	return in, nil
 }

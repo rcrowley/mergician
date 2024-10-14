@@ -6,12 +6,13 @@ import (
 	"os"
 	"testing"
 
+	"github.com/rcrowley/mergician/files"
 	"github.com/rcrowley/mergician/html"
 )
 
 func TestParseMergeHTML(t *testing.T) {
 	pathnames := []string{"html/template.html", "html/article.html"}
-	in, err := parse(pathnames)
+	in, err := files.ParseSlice(pathnames)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +61,7 @@ func TestParseMergeMarkdown(t *testing.T) {
 	}
 
 	pathnames := []string{"html/template.html", "test.md"}
-	in, err := parse(pathnames)
+	in, err := files.ParseSlice(pathnames)
 	if err != nil {
 		t.Fatal(err)
 	}

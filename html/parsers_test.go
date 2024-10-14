@@ -18,6 +18,22 @@ func TestParseFile(t *testing.T) {
 	}
 }
 
+func TestParseFiles(t *testing.T) {
+	nodes, err := ParseFiles([]string{"article.html", "template.html"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(nodes) != 2 {
+		t.Fatal(nodes)
+	}
+	for _, n := range nodes {
+		//printNodeAsTree(n, "")
+		if n.Type != html.DocumentNode {
+			t.Fatal(NodeTypeString(n.Type))
+		}
+	}
+}
+
 func TestParseStringDocument(t *testing.T) {
 	n, err := ParseString(`<!DOCTYPE html>
 <html lang="en">

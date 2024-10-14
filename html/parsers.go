@@ -56,6 +56,19 @@ func ParseFile(pathname string) (*Node, error) {
 	return Parse(f)
 }
 
+// ParseFiles accepts a slice of HTML (or Markdown) filenames, parses the
+// documents, and returns []*Node and a nil error or nil and a non-nil error.
+func ParseFiles(pathnames []string) ([]*Node, error) {
+	in := make([]*Node, len(pathnames))
+	for i, pathname := range pathnames {
+		var err error
+		if in[i], err = ParseFile(pathname); err != nil {
+			return nil, err
+		}
+	}
+	return in, nil
+}
+
 // ParseString parses an HTML document or document fragment from a string.
 func ParseString(s string) (*Node, error) {
 
