@@ -186,7 +186,7 @@ See also
 
 Mergician powers a whole suite of tools that manipulate HTML documents:
 
-* [`deadlinks`](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
-* [`electrostatic`](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
-* [`frag`](https://github.com/rcrowley/frag): Extract fragments of HTML documents
-* [`sitesearch`](https://github.com/rcrowley/sitesearch): Index a document root directory and serve queries to it in AWS Lambda
+* [Deadlinks](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
+* [Electrostatic](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
+* [Frag](https://github.com/rcrowley/frag): Extract fragments of HTML documents
+* [Sitesearch](https://github.com/rcrowley/sitesearch): Index a document root directory and serve queries to it in AWS Lambda
