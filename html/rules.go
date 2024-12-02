@@ -73,6 +73,7 @@ func nodeStringForRule(n *Node) string {
 
 type ruleSlice []Rule
 
+// RuleSlice wraps a []Rule such that it can be used with flag.Var.
 func RuleSlice(rules []Rule) *ruleSlice {
 	rs := ruleSlice(rules)
 	return &rs
