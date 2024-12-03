@@ -60,6 +60,25 @@ func (err RuleError) Error() string {
 	return string(err)
 }
 
+type Rules []Rule
+
+func (rs *Rules) Set(s string) error {
+	r, err := ParseRule(s)
+	if err != nil {
+		return err
+	}
+	*rs = append(*rs, r)
+	return nil
+}
+
+func (rs *Rules) String() string {
+	ss := make([]string, len(*rs))
+	for i, r := range *rs {
+		ss[i] = r.String()
+	}
+	return strings.Join(ss, ", ")
+}
+
 func nodeStringForRule(n *Node) string {
 	ss := make([]string, len(n.Attr)+3)
 	ss[0] = "<"
@@ -69,36 +88,4 @@ func nodeStringForRule(n *Node) string {
 	}
 	ss[len(n.Attr)+2] = ">"
 	return strings.Join(ss, "")
-}
-
-type ruleSlice []Rule
-
-// RuleSlice wraps a []Rule such that it can be used with flag.Var.
-func RuleSlice(rules []Rule) *ruleSlice {
-	rs := ruleSlice(rules)
-	return &rs
-}
-
-func (rs *ruleSlice) Len() int {
-	if rs == nil || *rs == nil {
-		return 0
-	}
-	return len(*rs)
-}
-
-func (rs *ruleSlice) Set(s string) error {
-	r, err := ParseRule(s)
-	if err != nil {
-		return err
-	}
-	*rs = append(*rs, r)
-	return nil
-}
-
-func (rs *ruleSlice) String() string {
-	ss := make([]string, len(*rs))
-	for i, r := range *rs {
-		ss[i] = r.String()
-	}
-	return strings.Join(ss, ", ")
 }
