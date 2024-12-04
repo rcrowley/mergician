@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"io/fs"
 	"os"
@@ -9,6 +10,35 @@ import (
 	"github.com/rcrowley/mergician/files"
 	"github.com/rcrowley/mergician/html"
 )
+
+func TestMain(t *testing.T) {
+	stdout := &bytes.Buffer{}
+	Main([]string{"mergician", "html/template.html", "html/article.html"}, os.Stdin, stdout)
+	actual := stdout.String()
+	expected := `<!DOCTYPE html>
+<html lang="en">
+<head>
+<link href="template.css" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>My cool webpage — Website</title>
+</head>
+<body>
+<header><h1>Website</h1></header>
+<br/><!-- explicit self-closing -->
+<article class="body">
+<h1>Things</h1>
+<p>Stuff</p>
+</article>
+<br/><!-- implied self-closing -->
+<footer><p>© 2023</p></footer>
+</body>
+</html>
+`
+	if actual != expected {
+		t.Fatalf("actual: %s != expected: %s", actual, expected)
+	}
+}
 
 func TestParseMergeHTML(t *testing.T) {
 	pathnames := []string{"html/template.html", "html/article.html"}

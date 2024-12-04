@@ -13,15 +13,12 @@ import (
 	"github.com/rcrowley/mergician/html"
 )
 
-func init() {
-	log.SetFlags(0)
-}
-
-func main() {
-	output := flag.String("o", "-", "write to this file instead of standard output")
+func Main(args []string, stdin io.Reader, stdout io.Writer) {
+	flags := flag.NewFlagSet(args[0], flag.ExitOnError)
+	output := flags.String("o", "-", "write to this file instead of standard output")
 	rules := new(html.Rules)
-	flag.Var(rules, "r", "use a custom rule for merging inputs (overrides all defaults; may be repeated)")
-	flag.Usage = func() {
+	flags.Var(rules, "r", "use a custom rule for merging inputs (overrides all defaults; may be repeated)")
+	flags.Usage = func() {
 		fmt.Fprint(os.Stderr, `Usage: mergician [-o <output>] [-r <rule>[...]] <input>[...]
   -o <output>   write to this file instead of standard output
   -r <rule>     use a custom rule for merging inputs (overrides all defaults;
@@ -34,22 +31,22 @@ func main() {
   <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip files
 `)
 	}
-	flag.Parse()
-	if flag.NArg() == 0 {
+	flags.Parse(args[1:])
+	if flags.NArg() == 0 {
 		log.Fatal("need at least one input HTML, Markdown, or Google Doc HTML-in-zip file")
 	}
-	in := must2(files.ParseSlice(flag.Args()))
+	in := must2(files.ParseSlice(flags.Args()))
 
 	// Short-circuit if we've only been given one argument. We check this after
 	// the call to files.ParseSlice() for the side-effect of files.ParseSlice()
 	// rendering Markdown to HTML. If there's only one file, though, let's not
 	// try to merge it with nothing, which will superficially change the HTML
 	// and change the hashes stored alongside the HTML rendered from Markdown.
-	if flag.NArg() == 1 {
+	if flags.NArg() == 1 {
 		if *output == "-" {
-			f := must2(os.Open(fmt.Sprintf("%s.html", strings.TrimSuffix(flag.Arg(0), filepath.Ext(flag.Arg(0))))))
+			f := must2(os.Open(fmt.Sprintf("%s.html", strings.TrimSuffix(flags.Arg(0), filepath.Ext(flags.Arg(0))))))
 			defer f.Close()
-			must2(io.Copy(os.Stdout, f))
+			must2(io.Copy(stdout, f))
 		}
 		return
 	}
@@ -61,10 +58,18 @@ func main() {
 	out := must2(html.Merge(in, *rules))
 
 	if *output == "-" {
-		must(html.Print(out))
+		must(html.Render(stdout, out))
 	} else {
 		must(html.RenderFile(*output, out))
 	}
+}
+
+func init() {
+	log.SetFlags(0)
+}
+
+func main() {
+	Main(os.Args, os.Stdin, os.Stdout)
 }
 
 func must(err error) {
