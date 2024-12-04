@@ -5,11 +5,13 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/rcrowley/mergician/html"
 )
 
 type List struct {
+	mu        sync.Mutex
 	pathnames []string
 }
 
@@ -18,6 +20,8 @@ func (l *List) Add(pathname string) {
 	if ext != ".html" && ext != ".md" {
 		return
 	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 
 	// If the Markdown variant of this pathname is in the list already,
 	// we're done.
@@ -53,5 +57,7 @@ func (l *List) Parse() ([]*html.Node, error) {
 }
 
 func (l *List) Pathnames() []string {
-	return l.pathnames
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return append(([]string)(nil), l.pathnames...)
 }
