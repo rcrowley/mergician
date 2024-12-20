@@ -81,7 +81,7 @@ Installation
 ------------
 
 ```sh
-go get github.com/rcrowley/mergician
+go install github.com/rcrowley/mergician
 ```
 
 Usage

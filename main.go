@@ -29,6 +29,8 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
                                <div class="body"> = <body>
                                <section class="body"> = <body>
   <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip files
+
+Synopsis: mergician merges multiple HTML documents into one based on Microformats-like rules.
 `)
 	}
 	flags.Parse(args[1:])
