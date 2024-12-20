@@ -17,7 +17,7 @@ type List struct {
 
 func (l *List) Add(pathname string) {
 	ext := filepath.Ext(pathname)
-	if ext != ".html" && ext != ".md" {
+	if ext != ".html" && ext != ".md" && ext != ".zip" {
 		return
 	}
 	l.mu.Lock()
