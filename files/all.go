@@ -41,3 +41,11 @@ func All(includes, excludes, extensions []string) (*List, error) {
 	}
 	return l, nil
 }
+
+func AllHTML(includes, excludes []string) (*List, error) {
+	return All(includes, excludes, []string{".htm", ".html"})
+}
+
+func AllInputs(includes, excludes []string) (*List, error) {
+	return All(includes, excludes, []string{".htm", ".html", ".md", ".zip"})
+}
