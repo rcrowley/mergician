@@ -1,7 +1,6 @@
 package files
 
 import (
-	"iter"
 	"slices"
 	"testing"
 )
@@ -10,7 +9,7 @@ func TestListDuplicate(t *testing.T) {
 	l := &List{}
 	l.Add("test.html")
 	l.Add("test.html")
-	if paths := seqSlice(l.IterRelative()); !slices.Equal(paths, []string{"test.html"}) {
+	if paths := l.RelativePaths(); !slices.Equal(paths, []string{"test.html"}) {
 		t.Fatal(paths)
 	}
 }
@@ -19,7 +18,7 @@ func TestListHTMLThenMarkdown(t *testing.T) {
 	l := &List{}
 	l.Add("test.html")
 	l.Add("test.md")
-	if paths := seqSlice(l.IterRelative()); !slices.Equal(paths, []string{"test.md"}) {
+	if paths := l.RelativePaths(); !slices.Equal(paths, []string{"test.md"}) {
 		t.Fatal(paths)
 	}
 }
@@ -28,7 +27,7 @@ func TestListMarkdownThenHTML(t *testing.T) {
 	l := &List{}
 	l.Add("test.md")
 	l.Add("test.html")
-	if paths := seqSlice(l.IterRelative()); !slices.Equal(paths, []string{"test.md"}) {
+	if paths := l.RelativePaths(); !slices.Equal(paths, []string{"test.md"}) {
 		t.Fatal(paths)
 	}
 }
@@ -36,7 +35,7 @@ func TestListMarkdownThenHTML(t *testing.T) {
 func TestListNotMarkdownOrHTML(t *testing.T) {
 	l := &List{}
 	l.Add("test.go")
-	if paths := seqSlice(l.IterRelative()); !slices.Equal(paths, []string{}) {
+	if paths := l.RelativePaths(); !slices.Equal(paths, []string{}) {
 		t.Fatal(paths)
 	}
 }
@@ -60,15 +59,7 @@ func TestListSorted(t *testing.T) {
 	l.Add("a.html")
 	l.Add("d.html")
 	l.Add("c.html")
-	if paths := seqSlice(l.IterRelative()); !slices.Equal(paths, []string{"a.html", "b.html", "c.html", "d.html"}) {
+	if paths := l.RelativePaths(); !slices.Equal(paths, []string{"a.html", "b.html", "c.html", "d.html"}) {
 		t.Fatal(paths)
 	}
-}
-
-func seqSlice[T any](seq iter.Seq[T]) []T {
-	var slice []T
-	for t := range seq {
-		slice = append(slice, t)
-	}
-	return slice
 }

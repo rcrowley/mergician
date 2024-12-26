@@ -2,7 +2,6 @@ package files
 
 import (
 	"fmt"
-	"iter"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -54,36 +53,22 @@ func (l *List) Add(path string) {
 	}
 }
 
-func (l *List) IterQualified() iter.Seq[string] {
-	root := l.root // copy on purpose
-	return func(yield func(string) bool) {
-		for path := range l.IterRelative() {
-			if !yield(filepath.Join(root, path)) {
-				return
-			}
-		}
-	}
-}
-
-func (l *List) IterRelative() iter.Seq[string] {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	paths := append(([]string)(nil), l.paths...) // copy on purpose
-	return func(yield func(string) bool) {
-		for _, path := range paths {
-			if !yield(path) {
-				return
-			}
-		}
-	}
-}
-
 func (l *List) Parse() ([]*html.Node, error) {
-	return ParseSlice(l.Paths())
+	return ParseSlice(l.QualifiedPaths())
 }
 
-func (l *List) Paths() []string {
+func (l *List) QualifiedPaths() []string {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	return append(([]string)(nil), l.paths...)
+	paths := make([]string, len(l.paths))
+	for i, path := range l.paths {
+		paths[i] = filepath.Join(l.root, path)
+	}
+	return paths
+}
+
+func (l *List) RelativePaths() []string {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return append(([]string)(nil), l.paths...) // copy on purpose
 }
