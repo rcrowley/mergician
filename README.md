@@ -96,7 +96,7 @@ mergician [-o <output>] <input>[...]
     * `<article class="body"> = <body>`
     * `<div class="body"> = <body>`
     * `<section class="body"> = <body>`
-* `<input>[...]`: pathname to one or more input HTML, Markdown, or Google Doc HTML-in-zip files
+* `<input>[...]`: one or more input HTML, Markdown, or Google Doc HTML-in-zip documents
 
 Rules
 -----
@@ -131,9 +131,9 @@ Lots of documents will be written first in Markdown, rendered to HTML, and then 
 
 In order to ensure subsequent edits to Markdown files don't overwrite edits made directly to the HTML files that were rendered from those Markdown files, Mergician processes Markdown files as follows:
 
-1. Replace `.md` with `.html` at the end of the document's filename.
-2. If the HTML filename (1) exists, hash its contents.
-3. If the HTML filename (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
+1. Replace `.md` with `.html` at the end of the document's name.
+2. If the HTML document (1) exists, hash its contents.
+3. If the HTML document (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
 4. If hashes (2) and (3) both exist and do not match, exit with an error to preserve the edited HTML.
 5. If hash (2) exists but hash (3) doesn't, warn and continue.
 6. Render the Markdown to HTML.

@@ -2,6 +2,7 @@ package files
 
 import (
 	"fmt"
+	"iter"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -11,53 +12,78 @@ import (
 )
 
 type List struct {
-	mu        sync.Mutex
-	pathnames []string
+	mu    sync.Mutex
+	paths []string
+	root  string
 }
 
-func (l *List) Add(pathname string) {
-	ext := filepath.Ext(pathname)
+func NewList(root string) *List {
+	return &List{root: root}
+}
+
+func (l *List) Add(path string) {
+	ext := filepath.Ext(path)
 	if ext != ".htm" && ext != ".html" && ext != ".md" && ext != ".zip" {
 		return
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	// If the Markdown variant of this pathname is in the list already,
+	// If the Markdown variant of this path is in the list already,
 	// we're done.
-	mdPathname := fmt.Sprint(strings.TrimSuffix(pathname, ext), ".md")
-	//log.Printf("Markdown %v", mdPathname)
-	i := sort.SearchStrings(l.pathnames, mdPathname)
-	if i < len(l.pathnames) && l.pathnames[i] == mdPathname {
-		//log.Print("already got one")
+	mdPath := fmt.Sprint(strings.TrimSuffix(path, ext), ".md")
+	i := sort.SearchStrings(l.paths, mdPath)
+	if i < len(l.paths) && l.paths[i] == mdPath {
 		return
 	}
 
-	// If the HTML variant of this pathname is in the list already, convert
+	// If the HTML variant of this path is in the list already, convert
 	// its extension to this extension.
-	htmlPathname := fmt.Sprint(strings.TrimSuffix(pathname, ext), ".html")
-	//log.Printf("HTML %v", htmlPathname)
-	i = sort.SearchStrings(l.pathnames, htmlPathname)
-	if i < len(l.pathnames) && l.pathnames[i] == htmlPathname {
-		//log.Printf("replacing %v with %v", htmlPathname, pathname)
-		l.pathnames[i] = pathname
+	htmlPath := fmt.Sprint(strings.TrimSuffix(path, ext), ".html")
+	i = sort.SearchStrings(l.paths, htmlPath)
+	if i < len(l.paths) && l.paths[i] == htmlPath {
+		l.paths[i] = path
 		return
 	}
 
-	i = sort.SearchStrings(l.pathnames, pathname)
-	if i == len(l.pathnames) || l.pathnames[i] != pathname {
-		l.pathnames = append(l.pathnames, "")
-		copy(l.pathnames[i+1:], l.pathnames[i:])
-		l.pathnames[i] = pathname
+	i = sort.SearchStrings(l.paths, path)
+	if i == len(l.paths) || l.paths[i] != path {
+		l.paths = append(l.paths, "")
+		copy(l.paths[i+1:], l.paths[i:])
+		l.paths[i] = path
+	}
+}
+
+func (l *List) IterQualified() iter.Seq[string] {
+	root := l.root // copy on purpose
+	return func(yield func(string) bool) {
+		for path := range l.IterRelative() {
+			if !yield(filepath.Join(root, path)) {
+				return
+			}
+		}
+	}
+}
+
+func (l *List) IterRelative() iter.Seq[string] {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	paths := append(([]string)(nil), l.paths...) // copy on purpose
+	return func(yield func(string) bool) {
+		for _, path := range paths {
+			if !yield(path) {
+				return
+			}
+		}
 	}
 }
 
 func (l *List) Parse() ([]*html.Node, error) {
-	return ParseSlice(l.Pathnames())
+	return ParseSlice(l.Paths())
 }
 
-func (l *List) Pathnames() []string {
+func (l *List) Paths() []string {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	return append(([]string)(nil), l.pathnames...)
+	return append(([]string)(nil), l.paths...)
 }

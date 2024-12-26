@@ -28,7 +28,7 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
                 default rules: <article class="body"> = <body>
                                <div class="body"> = <body>
                                <section class="body"> = <body>
-  <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip files
+  <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip documents
 
 Synopsis: mergician merges multiple HTML documents into one based on Microformats-like rules.
 `)

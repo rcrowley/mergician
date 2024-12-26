@@ -14,8 +14,8 @@ import (
 // Google extracts a non-deranged HTML node from a zip file containing an HTML
 // file obtained from the File > Download > Web Page (.html, zipped) option
 // in Google Docs.
-func Google(pathname string) (*Node, error) {
-	n, err := parseZipFile(pathname)
+func Google(path string) (*Node, error) {
+	n, err := parseZipFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -137,8 +137,8 @@ func parseGoogleCSS(raw string) (strongClasses, emClasses []string) {
 	return
 }
 
-func parseZipFile(pathname string) (*Node, error) {
-	r, err := zip.OpenReader(pathname)
+func parseZipFile(path string) (*Node, error) {
+	r, err := zip.OpenReader(path)
 	if err != nil {
 		return nil, err
 	}
@@ -159,5 +159,5 @@ func parseZipFile(pathname string) (*Node, error) {
 
 		}
 	}
-	return nil, fmt.Errorf("no HTML file found in %s", pathname)
+	return nil, fmt.Errorf("no HTML file found in %s", path)
 }

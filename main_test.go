@@ -41,8 +41,7 @@ func TestMain(t *testing.T) {
 }
 
 func TestParseMergeHTML(t *testing.T) {
-	pathnames := []string{"html/template.html", "html/article.html"}
-	in, err := files.ParseSlice(pathnames)
+	in, err := files.ParseSlice([]string{"html/template.html", "html/article.html"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,8 +89,7 @@ func TestParseMergeMarkdown(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pathnames := []string{"html/template.html", "test.md"}
-	in, err := files.ParseSlice(pathnames)
+	in, err := files.ParseSlice([]string{"html/template.html", "test.md"})
 	if err != nil {
 		t.Fatal(err)
 	}

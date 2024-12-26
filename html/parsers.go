@@ -40,15 +40,15 @@ func Parse(r io.Reader) (n *Node, err error) {
 // ParseFile opens an HTML file, parses the document it contains, closes the
 // file descriptor, and returns the parsed HTML document. In case of error,
 // a nil *Node is returned along with the error.
-func ParseFile(pathname string) (*Node, error) {
+func ParseFile(path string) (*Node, error) {
 
 	// Detect and descend into Google Docs' HTML-in-zip format.
 	// TODO also support EPUB files
-	if ext := filepath.Ext(pathname); ext == ".zip" {
-		return Google(pathname)
+	if ext := filepath.Ext(path); ext == ".zip" {
+		return Google(path)
 	}
 
-	f, err := os.Open(pathname)
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -56,13 +56,13 @@ func ParseFile(pathname string) (*Node, error) {
 	return Parse(f)
 }
 
-// ParseFiles accepts a slice of HTML (or Markdown) filenames, parses the
+// ParseFiles accepts a slice of HTML (or Markdown) document names, parses the
 // documents, and returns []*Node and a nil error or nil and a non-nil error.
-func ParseFiles(pathnames []string) ([]*Node, error) {
-	in := make([]*Node, len(pathnames))
-	for i, pathname := range pathnames {
+func ParseFiles(paths []string) ([]*Node, error) {
+	in := make([]*Node, len(paths))
+	for i, path := range paths {
 		var err error
-		if in[i], err = ParseFile(pathname); err != nil {
+		if in[i], err = ParseFile(path); err != nil {
 			return nil, err
 		}
 	}

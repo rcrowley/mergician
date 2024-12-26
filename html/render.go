@@ -24,8 +24,8 @@ func Render(w io.Writer, n *Node) error {
 
 // RenderFile writes an HTML document to a file, overwriting if the file
 // already exists.
-func RenderFile(pathname string, n *Node) error {
-	f, err := os.Create(pathname)
+func RenderFile(path string, n *Node) error {
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}

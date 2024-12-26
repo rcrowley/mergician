@@ -24,8 +24,8 @@ func Parse(r io.Reader) (*Document, error) {
 // ParseFile opens a Markdown file, parses the document it contains, closes
 // the file descriptor, and returns the parsed Markdown document. In case of
 // error, a nil *Node is returned along with the error.
-func ParseFile(pathname string) (*Document, error) {
-	f, err := os.Open(pathname)
+func ParseFile(path string) (*Document, error) {
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}

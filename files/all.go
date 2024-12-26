@@ -2,6 +2,7 @@ package files
 
 import (
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -9,6 +10,7 @@ import (
 func All(includes, excludes, extensions []string) (*List, error) {
 	l := &List{}
 	for _, include := range includes {
+		log.Printf("include: %q", include)
 		if err := fs.WalkDir(
 			os.DirFS(include),
 			".",
@@ -29,6 +31,7 @@ func All(includes, excludes, extensions []string) (*List, error) {
 				ext := filepath.Ext(path)
 				for _, e := range extensions {
 					if e == ext {
+						//l.Add(filepath.Join(include, path))
 						l.Add(path)
 					}
 				}
@@ -36,6 +39,7 @@ func All(includes, excludes, extensions []string) (*List, error) {
 				return nil
 			},
 		); err != nil {
+			log.Printf("files.All err: %v", err)
 			return nil, err
 		}
 	}

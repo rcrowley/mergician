@@ -62,36 +62,36 @@ func Render(w io.Writer, d *Document) error {
 // matches the hash written the last time this Markdown document was rendered
 // to this HTML file. If ever we need to upgrade from SHA256, we'll "version"
 // the crypto by changing the file extension.
-func RenderFile(pathname string, d *Document) error {
-	hashPathname := filepath.Join(filepath.Dir(pathname), fmt.Sprintf(".%s.sha256", filepath.Base(pathname)))
+func RenderFile(path string, d *Document) error {
+	hashPath := filepath.Join(filepath.Dir(path), fmt.Sprintf(".%s.sha256", filepath.Base(path)))
 
-	if exists(pathname) {
-		if exists(hashPathname) {
-			hashHash, err := os.ReadFile(hashPathname)
+	if exists(path) {
+		if exists(hashPath) {
+			hashHash, err := os.ReadFile(hashPath)
 			if err != nil {
 				return err
 			}
-			htmlHash, err := hashFile(pathname)
+			htmlHash, err := hashFile(path)
 			if err != nil {
 				return err
 			}
 			if !bytes.Equal(hashHash, htmlHash) {
 				return fmt.Errorf(
 					"error: contents of %s does not match %s; not rendering to preserve changes made directly to the HTML",
-					pathname,
-					hashPathname,
+					path,
+					hashPath,
 				)
 			}
 		} else {
 			log.Printf(
 				"warning: %s exists without %s; changes made directly to the HTML may be lost",
-				pathname,
-				hashPathname,
+				path,
+				hashPath,
 			)
 		}
 	}
 
-	f, err := os.Create(pathname)
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -102,11 +102,11 @@ func RenderFile(pathname string, d *Document) error {
 		return err
 	}
 
-	hash, err := hashFile(pathname)
+	hash, err := hashFile(path)
 	if err != nil {
 		return err
 	}
-	if err := os.WriteFile(hashPathname, hash, 0666); err != nil {
+	if err := os.WriteFile(hashPath, hash, 0666); err != nil {
 		return err
 	}
 
@@ -120,13 +120,13 @@ func String(d *Document) string {
 	return d.String() // TODO wrap this string in the same complete HTML document as in Render
 }
 
-func exists(pathname string) bool {
-	_, err := os.Stat(pathname)
+func exists(path string) bool {
+	_, err := os.Stat(path)
 	return err == nil
 }
 
-func hashFile(pathname string) ([]byte, error) {
-	f, err := os.Open(pathname)
+func hashFile(path string) ([]byte, error) {
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
