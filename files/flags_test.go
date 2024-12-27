@@ -1,9 +1,13 @@
 package files
 
-import "testing"
+import (
+	"flag"
+	"testing"
+)
 
 func TestStringSliceFlag(t *testing.T) {
-	f := &StringSliceFlag{}
+	flagSet := &flag.FlagSet{}
+	f := NewStringSliceFlag(flagSet, "t", "test")
 	if s := f.String(); s != "" {
 		t.Fatal(s)
 	}
