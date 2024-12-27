@@ -17,7 +17,7 @@ func (f *StringSliceFlag) String() string {
 	return strings.Join(*f, ", ")
 }
 
-func (f *StringSliceFlag) Set(s string) bool {
+func (f *StringSliceFlag) Set(s string) error {
 	*f = append(*f, s)
-	return true
+	return nil
 }
