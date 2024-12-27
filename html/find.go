@@ -102,3 +102,9 @@ func Match(pattern *Node) func(*Node) bool {
 		return true
 	}
 }
+
+func Not(f func(*Node) bool) func(*Node) bool {
+	return func(n *Node) bool {
+		return !f(n)
+	}
+}

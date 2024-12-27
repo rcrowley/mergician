@@ -35,6 +35,10 @@ func TestMatch(t *testing.T) {
 	testFindAll(t, Match(NewNode(atom.Div, "id", "id")), 0)
 }
 
+func TestNot(t *testing.T) {
+	testFindAll(t, Not(IsAtom(atom.P)), 39)
+}
+
 func testFindAll(t *testing.T, f func(*Node) bool, i int) {
 	t.Helper()
 	n, err := ParseFile("template.html")
