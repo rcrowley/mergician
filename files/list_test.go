@@ -63,3 +63,10 @@ func TestListSorted(t *testing.T) {
 		t.Fatal(paths)
 	}
 }
+
+func TestListRoot(t *testing.T) {
+	l := NewList("root")
+	if root := l.Root(); root != "root" {
+		t.Fatal(root)
+	}
+}

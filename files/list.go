@@ -72,3 +72,9 @@ func (l *List) RelativePaths() []string {
 	defer l.mu.Unlock()
 	return append(([]string)(nil), l.paths...) // copy on purpose
 }
+
+func (l *List) Root() string {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.root
+}
