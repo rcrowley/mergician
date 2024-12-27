@@ -74,9 +74,9 @@ func (rs *Rules) Set(s string) error {
 func (rs *Rules) String() string {
 	ss := make([]string, len(*rs))
 	for i, r := range *rs {
-		ss[i] = r.String()
+		ss[i] = fmt.Sprintf("-r '%s'", r)
 	}
-	return strings.Join(ss, ", ")
+	return strings.Join(ss, " ")
 }
 
 func nodeStringForRule(n *Node) string {
