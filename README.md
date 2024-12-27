@@ -81,7 +81,7 @@ Installation
 ------------
 
 ```sh
-go install github.com/rcrowley/mergician
+go install github.com/rcrowley/mergician@latest
 ```
 
 Usage
@@ -188,5 +188,6 @@ Mergician powers a whole suite of tools that manipulate HTML documents:
 
 * [Deadlinks](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
 * [Electrostatic](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
+* [Feed](https://github.com/rcrowley/feed): Scan a document root directory to construct an Atom feed
 * [Frag](https://github.com/rcrowley/frag): Extract fragments of HTML documents
 * [Sitesearch](https://github.com/rcrowley/sitesearch): Index a document root directory and serve queries to it in AWS Lambda
