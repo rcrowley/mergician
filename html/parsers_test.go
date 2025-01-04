@@ -39,7 +39,7 @@ func TestParseStringDocument(t *testing.T) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>TestPareStringDocument</title>
+<title>TestParseStringDocument</title>
 </head>
 <body>
 <h1>TestParseStringDocument</h1>
