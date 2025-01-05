@@ -19,8 +19,8 @@ func All(includes, excludes, extensions []string) ([]List, error) {
 				}
 
 				if !d.Type().IsRegular() {
-					for _, e := range excludes {
-						if e == path {
+					for _, exclude := range excludes {
+						if filepath.Clean(filepath.Join(include, path)) == filepath.Clean(exclude) {
 							return fs.SkipDir
 						}
 					}
