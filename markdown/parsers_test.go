@@ -3,7 +3,7 @@ package markdown
 import "testing"
 
 func TestParseFile(t *testing.T) {
-	d, err := ParseFile("test.md")
+	d, err := ParseFile("testdata/test.md")
 	if err != nil {
 		t.Fatal(err)
 	}

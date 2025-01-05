@@ -29,19 +29,19 @@ func TestRenderFile(t *testing.T) {
 `
 
 	// No HTML or hash files in the way.
-	if err := os.Remove("test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("testdata/test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if err := os.Remove(".test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("testdata/.test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if d, err = ParseFile("test.md"); err != nil {
+	if d, err = ParseFile("testdata/test.md"); err != nil {
 		t.Fatal(err)
 	}
-	if err := RenderFile("test.html", d); err != nil {
+	if err := RenderFile("testdata/test.html", d); err != nil {
 		t.Fatal(err)
 	}
-	if actual, err = os.ReadFile("test.html"); err != nil {
+	if actual, err = os.ReadFile("testdata/test.html"); err != nil {
 		t.Fatal(err)
 	}
 	if string(actual) != expected {
@@ -49,13 +49,13 @@ func TestRenderFile(t *testing.T) {
 	}
 
 	// Unmodified HTML in the way, which should still succeed.
-	if d, err = ParseFile("test.md"); err != nil {
+	if d, err = ParseFile("testdata/test.md"); err != nil {
 		t.Fatal(err)
 	}
-	if err := RenderFile("test.html", d); err != nil {
+	if err := RenderFile("testdata/test.html", d); err != nil {
 		t.Fatal(err)
 	}
-	if actual, err = os.ReadFile("test.html"); err != nil {
+	if actual, err = os.ReadFile("testdata/test.html"); err != nil {
 		t.Fatal(err)
 	}
 	if string(actual) != expected {
@@ -63,13 +63,13 @@ func TestRenderFile(t *testing.T) {
 	}
 
 	// Modified HTML in the way, which should error.
-	if err := os.Truncate("test.html", 0); err != nil {
+	if err := os.Truncate("testdata/test.html", 0); err != nil {
 		t.Fatal(err)
 	}
-	if err := RenderFile("test.html", d); err == nil {
+	if err := RenderFile("testdata/test.html", d); err == nil {
 		t.Fatal("expected error")
 	}
-	fi, err := os.Stat("test.html")
+	fi, err := os.Stat("testdata/test.html")
 	if err != nil {
 		t.Fatal(err)
 	}

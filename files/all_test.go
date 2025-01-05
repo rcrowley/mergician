@@ -6,7 +6,7 @@ import (
 )
 
 func TestAll(t *testing.T) {
-	lists, err := All([]string{"."}, []string{}, []string{".html", ".md", ".zip"}) // skipping ".htm"
+	lists, err := All([]string{"testdata"}, []string{}, []string{".html", ".md", ".zip"}) // skipping ".htm"
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,7 +16,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestAllHTML(t *testing.T) {
-	lists, err := AllHTML([]string{"."}, []string{})
+	lists, err := AllHTML([]string{"testdata"}, []string{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +26,7 @@ func TestAllHTML(t *testing.T) {
 }
 
 func TestAllHTMLExclude(t *testing.T) {
-	lists, err := AllHTML([]string{"."}, []string{"test"})
+	lists, err := AllHTML([]string{"testdata"}, []string{"testdata/test"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func TestAllHTMLExclude(t *testing.T) {
 }
 
 func TestAllHTMLExclude2(t *testing.T) {
-	lists, err := AllHTML([]string{"."}, []string{"test", "test2"})
+	lists, err := AllHTML([]string{"testdata"}, []string{"testdata/test", "testdata/test2"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -46,7 +46,7 @@ func TestAllHTMLExclude2(t *testing.T) {
 }
 
 func TestAllInputs(t *testing.T) {
-	lists, err := AllInputs([]string{"."}, []string{})
+	lists, err := AllInputs([]string{"testdata"}, []string{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestAllInputs(t *testing.T) {
 }
 
 func TestAllMarkdown(t *testing.T) {
-	lists, err := All([]string{"."}, []string{}, []string{".md"})
+	lists, err := All([]string{"testdata"}, []string{}, []string{".md"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,14 +74,14 @@ func TestAllMarkdown(t *testing.T) {
 }
 
 func TestAllSub(t *testing.T) {
-	lists, err := All([]string{"test"}, []string{}, []string{".htm", ".html"})
+	lists, err := All([]string{"testdata/test"}, []string{}, []string{".htm", ".html"})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(lists) != 1 {
 		t.Fatal(lists)
 	}
-	if paths := lists[0].QualifiedPaths(); !slices.Equal(paths, []string{"test/html.html", "test/test/htm.htm"}) {
+	if paths := lists[0].QualifiedPaths(); !slices.Equal(paths, []string{"testdata/test/html.html", "testdata/test/test/htm.htm"}) {
 		t.Fatal(paths)
 	}
 	if paths := lists[0].RelativePaths(); !slices.Equal(paths, []string{"html.html", "test/htm.htm"}) {
@@ -90,17 +90,17 @@ func TestAllSub(t *testing.T) {
 }
 
 func TestAllSub2(t *testing.T) {
-	lists, err := All([]string{"test", "test2"}, []string{}, []string{".htm", ".html"})
+	lists, err := All([]string{"testdata/test", "testdata/test2"}, []string{}, []string{".htm", ".html"})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(lists) != 2 {
 		t.Fatal(lists)
 	}
-	if paths := lists[0].QualifiedPaths(); !slices.Equal(paths, []string{"test/html.html", "test/test/htm.htm"}) {
+	if paths := lists[0].QualifiedPaths(); !slices.Equal(paths, []string{"testdata/test/html.html", "testdata/test/test/htm.htm"}) {
 		t.Fatal(paths)
 	}
-	if paths := lists[1].QualifiedPaths(); !slices.Equal(paths, []string{"test2/html.html"}) {
+	if paths := lists[1].QualifiedPaths(); !slices.Equal(paths, []string{"testdata/test2/html.html"}) {
 		t.Fatal(paths)
 	}
 	if paths := lists[0].RelativePaths(); !slices.Equal(paths, []string{"html.html", "test/htm.htm"}) {

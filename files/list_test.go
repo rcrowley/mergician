@@ -42,8 +42,8 @@ func TestListNotMarkdownOrHTML(t *testing.T) {
 
 func TestListParse(t *testing.T) {
 	l := &List{}
-	l.Add("html.html")
-	l.Add("md.md")
+	l.Add("testdata/html.html") // these actually need
+	l.Add("testdata/md.md")     // to exist
 	nodes, err := l.Parse()
 	if err != nil {
 		t.Fatal(err)

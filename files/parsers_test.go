@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseHTML(t *testing.T) {
-	n, err := Parse("html.html")
+	n, err := Parse("testdata/html.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -17,7 +17,7 @@ func TestParseHTML(t *testing.T) {
 }
 
 func TestParseMarkdown(t *testing.T) {
-	n, err := Parse("md.md")
+	n, err := Parse("testdata/md.md")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,7 +27,7 @@ func TestParseMarkdown(t *testing.T) {
 }
 
 func TestParseSlice(t *testing.T) {
-	nodes, err := ParseSlice([]string{"html.html", "md.md"})
+	nodes, err := ParseSlice([]string{"testdata/html.html", "testdata/md.md"})
 	if err != nil {
 		t.Fatal(err)
 	}
