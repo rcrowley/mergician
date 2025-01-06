@@ -119,7 +119,7 @@ Mergician merges the second HTML document it's given into the first, then the th
 For each pair of documents it merges, it follows these steps:
 
 1. Merge `<title>` tags by appending " / " and the second `<title>` tag's text to the first `<title>` tag's text. (TODO: If there is no first `<title>` tag, copy the second `<title>` tag in unchanged. Also TODO: extend the [rules](#rules) to support customizing how the title text nodes are merged.)
-2. Merge `<head>` tags by appending all the unique children from the second `<head>` tag into the first.
+2. Merge `<head>` tags by appending all the unique children from the second `<head>` tag to the first.
 3. Iterate over the [rules](#rules) and, for each l-value matched in the first document and r-value matched in the second, replace (with `=`) or append to (with `+=`) the match in the first document with the content from the match in the second.
 
 Markdown
@@ -131,7 +131,7 @@ In order to ensure subsequent edits to Markdown files don't overwrite edits made
 
 1. Replace `.md` with `.html` at the end of the document's name.
 2. If the HTML document (1) exists, hash its contents.
-3. If the HTML document (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
+3. If a file with the name of the HTML document (1) prefixed with a `.` and suffixed with `.sha256` exists, read its contents.
 4. If hashes (2) and (3) both exist and do not match, exit with an error to preserve the edited HTML.
 5. If hash (2) exists but hash (3) doesn't, warn and continue.
 6. Render the Markdown to HTML.
