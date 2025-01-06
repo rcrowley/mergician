@@ -1,9 +1,7 @@
 Mergician
 =========
 
-HTML is the language of the Web but the Web has moved beyond the bare, unstyled Web of the '90s (and university professors). Visitors to your site expect coherent layouts, visual consistency, navigation. This is the point at which most folks reach for a templating language.
-
-Mergician reimagines the often frustrating juxtaposition of HTML and templating language in pure HTML. Instead of rendering a template, merge a content HTML document into a template HTML document.
+HTML is the language of the Web but the Web has moved beyond the bare, unstyled Web of the '90s (and university professors). Visitors to your site expect coherent layouts, visual consistency, navigation. This is the point at which most folks reach for a templating language. Mergician reimagines the messy mix of HTML and templating language. All you need are HTML documents. Instead of rendering a template, merge a content HTML document into a template HTML document.
 
 For example, if you define two files:
 
