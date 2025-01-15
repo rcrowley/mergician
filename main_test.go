@@ -15,26 +15,7 @@ func TestMain(t *testing.T) {
 	stdout := &bytes.Buffer{}
 	Main([]string{"mergician", "html/testdata/template.html", "html/testdata/article.html"}, os.Stdin, stdout)
 	actual := stdout.String()
-	expected := `<!DOCTYPE html>
-<html lang="en">
-<head>
-<link href="template.css" rel="stylesheet"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>My cool webpage — Website</title>
-</head>
-<body>
-<header><h1>Website</h1></header>
-<br/><!-- explicit self-closing -->
-<article class="body">
-<h1>Things</h1>
-<p>Stuff</p>
-</article>
-<br/><!-- implied self-closing -->
-<footer><p>© 2023</p></footer>
-</body>
-</html>
-`
+	expected := testTemplatePlusArticleHTML(t)
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}
@@ -51,26 +32,7 @@ func TestParseMergeHTML(t *testing.T) {
 	}
 
 	actual := html.String(out)
-	expected := `<!DOCTYPE html>
-<html lang="en">
-<head>
-<link href="template.css" rel="stylesheet"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>My cool webpage — Website</title>
-</head>
-<body>
-<header><h1>Website</h1></header>
-<br/><!-- explicit self-closing -->
-<article class="body">
-<h1>Things</h1>
-<p>Stuff</p>
-</article>
-<br/><!-- implied self-closing -->
-<footer><p>© 2023</p></footer>
-</body>
-</html>
-`
+	expected := testTemplatePlusArticleHTML(t)
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}
@@ -99,31 +61,26 @@ func TestParseMergeMarkdown(t *testing.T) {
 	}
 
 	actual := html.String(out)
-	expected := `<!DOCTYPE html>
-<html lang="en">
-<head>
-<link href="template.css" rel="stylesheet"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Hello, world! — Website</title>
-</head>
-<body>
-<header><h1>Website</h1></header>
-<br/><!-- explicit self-closing -->
-<article class="body">
-<article>
-<h1>Hello, world!</h1>
-<p>Lovely day for a test, isn’t it?</p>
-</article>
-</article>
-<br/><!-- implied self-closing -->
-<footer><p>© 2023</p></footer>
-</body>
-</html>
-` // <article>-in-<article> is weird but just an artifact of this specific test harness
+	expected := testTemplatePlusTestHTML(t) // <article>-in-<article> is weird but just an artifact of this specific test harness
 	if actual != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}
 
 	//t.Log(html.String(out))
+}
+
+func testTemplatePlusArticleHTML(t *testing.T) string {
+	b, err := os.ReadFile("html/testdata/template+article.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+func testTemplatePlusTestHTML(t *testing.T) string {
+	b, err := os.ReadFile("testdata/template+test.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
 }
