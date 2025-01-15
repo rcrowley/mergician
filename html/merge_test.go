@@ -7,11 +7,11 @@ import (
 )
 
 func TestMergeCustom(t *testing.T) {
-	n0, err := ParseFile("template.html")
+	n0, err := ParseFile("testdata/template.html")
 	if err != nil {
 		t.Fatal(err)
 	}
-	n1, err := ParseFile("article.html")
+	n1, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,11 +48,11 @@ func TestMergeCustom(t *testing.T) {
 }
 
 func TestMergeCustomEmpty(t *testing.T) {
-	n0, err := ParseFile("template.html")
+	n0, err := ParseFile("testdata/template.html")
 	if err != nil {
 		t.Fatal(err)
 	}
-	n1, err := ParseFile("article.html")
+	n1, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,11 +89,11 @@ func TestMergeCustomEmpty(t *testing.T) {
 }
 
 func TestMergeDefault(t *testing.T) {
-	n0, err := ParseFile("template.html")
+	n0, err := ParseFile("testdata/template.html")
 	if err != nil {
 		t.Fatal(err)
 	}
-	n1, err := ParseFile("article.html")
+	n1, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}

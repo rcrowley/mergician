@@ -6,7 +6,7 @@ import (
 )
 
 func TestText(t *testing.T) {
-	n, err := ParseFile("article.html")
+	n, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestText(t *testing.T) {
 }
 
 func TestTextString(t *testing.T) {
-	n, err := ParseFile("article.html")
+	n, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}

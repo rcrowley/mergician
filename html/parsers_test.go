@@ -8,7 +8,7 @@ import (
 )
 
 func TestParseFile(t *testing.T) {
-	n, err := ParseFile("template.html")
+	n, err := ParseFile("testdata/template.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +19,7 @@ func TestParseFile(t *testing.T) {
 }
 
 func TestParseFiles(t *testing.T) {
-	nodes, err := ParseFiles([]string{"article.html", "template.html"})
+	nodes, err := ParseFiles([]string{"testdata/article.html", "testdata/template.html"})
 	if err != nil {
 		t.Fatal(err)
 	}

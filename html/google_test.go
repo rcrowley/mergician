@@ -3,7 +3,7 @@ package html
 import "testing"
 
 func TestGoogle(t *testing.T) {
-	n, err := Google("google.zip")
+	n, err := Google("testdata/google.zip")
 	if err != nil {
 		t.Fatal(err)
 	}

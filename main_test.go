@@ -13,7 +13,7 @@ import (
 
 func TestMain(t *testing.T) {
 	stdout := &bytes.Buffer{}
-	Main([]string{"mergician", "html/template.html", "html/article.html"}, os.Stdin, stdout)
+	Main([]string{"mergician", "html/testdata/template.html", "html/testdata/article.html"}, os.Stdin, stdout)
 	actual := stdout.String()
 	expected := `<!DOCTYPE html>
 <html lang="en">
@@ -41,7 +41,7 @@ func TestMain(t *testing.T) {
 }
 
 func TestParseMergeHTML(t *testing.T) {
-	in, err := files.ParseSlice([]string{"html/template.html", "html/article.html"})
+	in, err := files.ParseSlice([]string{"html/testdata/template.html", "html/testdata/article.html"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,14 +82,14 @@ func TestParseMergeMarkdown(t *testing.T) {
 
 	// Remove the HTML and hash files. We're cheating and reusing a file from
 	// another test and this ensures we don't encounter conflicts.
-	if err := os.Remove("test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("testdata/test.html"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
-	if err := os.Remove(".test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove("testdata/.test.html.sha256"); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		t.Fatal(err)
 	}
 
-	in, err := files.ParseSlice([]string{"html/template.html", "test.md"})
+	in, err := files.ParseSlice([]string{"html/testdata/template.html", "testdata/test.md"})
 	if err != nil {
 		t.Fatal(err)
 	}

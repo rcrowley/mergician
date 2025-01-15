@@ -41,7 +41,7 @@ func TestNot(t *testing.T) {
 
 func testFindAll(t *testing.T, f func(*Node) bool, i int) {
 	t.Helper()
-	n, err := ParseFile("template.html")
+	n, err := ParseFile("testdata/template.html")
 	if err != nil {
 		t.Fatal(err)
 	}

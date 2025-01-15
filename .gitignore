@@ -2,5 +2,3 @@
 go.work
 go.work.sum
 *.sw[opx]
-test.html
-.test.html.sha256

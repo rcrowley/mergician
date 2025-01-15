@@ -3,7 +3,7 @@ package html
 import "testing"
 
 func TestExtractFirstParagraph(t *testing.T) {
-	n, err := ParseFile("article.html")
+	n, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -13,7 +13,7 @@ func TestExtractFirstParagraph(t *testing.T) {
 }
 
 func TestExtractTitle(t *testing.T) {
-	n, err := ParseFile("article.html")
+	n, err := ParseFile("testdata/article.html")
 	if err != nil {
 		t.Fatal(err)
 	}
