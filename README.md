@@ -86,7 +86,7 @@ Usage
 -----
 
 ```sh
-mergician [-o <output>] <input>[...]
+mergician [-o <output>] [-r <rule>[...]] <input>[...]
 ```
 
 * `-o <output>`: write to this file instead of standard output
