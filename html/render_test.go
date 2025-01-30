@@ -19,20 +19,16 @@ func TestRenderFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := `<!DOCTYPE html>
-<html>
-<head>
-<link href="template.css" rel="stylesheet"/>
-<title>My cool webpage</title>
-</head>
-<body>
-<h1>Things</h1>
-<p>Stuff</p>
-</body>
-</html>
-`
+	expected := testArticleRenderedHTML(t)
 	if string(actual) != expected {
 		t.Fatalf("actual: %s != expected: %s", actual, expected)
 	}
+}
 
+func testArticleRenderedHTML(t *testing.T) string {
+	b, err := os.ReadFile("testdata/article.rendered.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
 }
