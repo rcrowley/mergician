@@ -22,12 +22,12 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 		fmt.Fprint(os.Stderr, `Usage: mergician [-o <output>] [-r <rule>[...]] <input>[...]
   -o <output>   write to this file instead of standard output
   -r <rule>     use a custom rule for merging inputs (overrides all defaults;
-                may be repeated)
+                may be repeated);
                 each rule is a destination HTML tag with optional attributes,
-                "=" or "+=", and a source HTML tag with optional attributes
-                default rules: <article class="body"> = <body>
-                               <div class="body"> = <body>
-                               <section class="body"> = <body>
+                "=" or "+=", and a source HTML tag with optional attributes;
+                the default rules are: <article class="body"> = <body>
+                                       <div class="body"> = <body>
+                                       <section class="body"> = <body>
   <input>[...]  one or more input HTML, Markdown, or Google Doc HTML-in-zip documents
 
 Synopsis: mergician merges multiple HTML documents into one based on Microformats-like rules.
