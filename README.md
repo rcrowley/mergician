@@ -21,7 +21,7 @@ For example, if you define two files:
 <br/>
 <div class="body"></div>
 <br/>
-<footer><p>&copy; 2024</p></footer>
+<footer><p>&copy; 2025</p></footer>
 </body>
 </html>
 ```
@@ -66,7 +66,7 @@ You get your webpage wrapped in your layout:
 <p>Stuff</p>
 </div>
 <br/>
-<footer><p>© 2024</p></footer>
+<footer><p>© 2025</p></footer>
 </body>
 </html>
 ```
@@ -172,7 +172,7 @@ You get your article wrapped in your layout:
 </article>
 </div>
 <br/>
-<footer><p>© 2024</p></footer>
+<footer><p>© 2025</p></footer>
 </body>
 </html>
 ```
