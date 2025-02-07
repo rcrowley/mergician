@@ -1,17 +1,17 @@
 Mergician
 =========
 
-HTML is the language of the Web but the Web has moved beyond the bare, unstyled Web of the '90s (and university professors). Visitors to your site expect coherent layouts, visual consistency, navigation. This is the point at which most folks reach for a templating language. Mergician reimagines the messy mix of HTML and templating language. All you need are HTML documents. Instead of rendering a template, merge a content HTML document into a template HTML document.
+HTML is the language of the Web but the Web has moved beyond the bare, unstyled Web of the '90s (and university professors). Visitors to your site expect coherent layouts, visual consistency, navigation. This is the point at which most folks reach for a templating language. Mergician reimagines the messy mix of HTML and templating language. All you need are HTML documents. Instead of rendering a template, merge a content HTML document into a layout HTML document.
 
 For example, if you define two files:
 
-`template.html`:
+`layout.html`:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link href="template.css" rel="stylesheet"/>
+<link href="layout.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Website</title>
@@ -32,7 +32,6 @@ For example, if you define two files:
 <!DOCTYPE html>
 <html>
 <head>
-<link href="template.css" rel="stylesheet"/>
 <title>My cool webpage</title>
 </head>
 <body>
@@ -45,20 +44,19 @@ For example, if you define two files:
 And use Mergician to merge them together:
 
 ```sh
-mergician template.html webpage.html
+mergician layout.html webpage.html
 ```
 
-You get your webpage wrapped in your template:
+You get your webpage wrapped in your layout:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link href="template.css" rel="stylesheet"/>
+<link href="layout.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My cool webpage — Website</title>
-<link href="template.css" rel="stylesheet"/>
 </head>
 <body>
 <header><h1>Website</h1></header>
@@ -138,7 +136,7 @@ In order to ensure subsequent edits to Markdown files don't overwrite edits made
 7. Redo hash (2) and write it to hash (3).
 8. Then merge the HTML with other HTML, etc.
 
-For example, taking `template.html` from above and `article.md`:
+For example, taking `layout.html` from above and `article.md`:
 
 ```
 Hello, world!
@@ -150,16 +148,16 @@ Hello, world!
 We can again use Mergician to merge them together:
 
 ```sh
-mergician template.html article.md
+mergician layout.html article.md
 ```
 
-You get your article wrapped in your template:
+You get your article wrapped in your layout:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link href="template.css" rel="stylesheet"/>
+<link href="layout.css" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Hello, world! — Website</title>
