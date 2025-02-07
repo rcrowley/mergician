@@ -100,9 +100,17 @@ func merge(dst, src *Node, rules []Rule) error {
 		if Match(rule.Dst)(dst) {
 			if srcBody := Find(src, Match(rule.Src)); srcBody != nil {
 
-				// TODO this is rule.Op == "="; need to support rule.Op == "+=", too
-				// TODO which might be as easy as not doing this line
-				dst.FirstChild, dst.LastChild = nil, nil
+				switch rule.Op {
+				case "=":
+					dst.FirstChild, dst.LastChild = nil, nil
+				case "+=":
+					if dst.LastChild != nil && IsWhitespace(dst.LastChild) {
+						Debugf("removing last child whitespace node: %#v", dst.LastChild.Data)
+						dst.RemoveChild(dst.LastChild)
+					}
+				default:
+					panic(fmt.Sprintf(`html.Merge: operator in %v is not "=" or "+="`, rule))
+				}
 
 				for n := srcBody.FirstChild; n != nil; n = n.NextSibling {
 					dst.AppendChild(CopyNode(n))

@@ -78,6 +78,31 @@ func TestMergeDefault(t *testing.T) {
 	//t.Log(String(n))
 }
 
+func TestMergePlusEquals(t *testing.T) {
+	n0, err := ParseFile("testdata/template.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	n1, err := ParseFile("testdata/article.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	n, err := Merge([]*Node{n0, n1}, []Rule{
+		{NewNode(atom.Article, "class", "body"), "+=", NewNode(atom.Body)},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actual := String(n)
+	expected := testTemplatePlusEqualsArticleHTML(t)
+	if actual != expected {
+		t.Fatalf("actual: %s != expected: %s", actual, expected)
+	}
+
+	//t.Log(String(n))
+}
+
 func testTemplatePlusArticleCustomHTML(t *testing.T) string {
 	b, err := os.ReadFile("testdata/template+article.custom.html")
 	if err != nil {
@@ -96,6 +121,14 @@ func testTemplatePlusArticleHTML(t *testing.T) string {
 
 func testTemplatePlusArticleNoRulesHTML(t *testing.T) string {
 	b, err := os.ReadFile("testdata/template+article.no-rules.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+func testTemplatePlusEqualsArticleHTML(t *testing.T) string {
+	b, err := os.ReadFile("testdata/template+=article.html")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -26,6 +26,19 @@ func TestParseRule(t *testing.T) {
 	}
 }
 
+func TestParseRuleError(t *testing.T) {
+	for _, s := range []string{
+		`<div = <body>`,
+		`<div> += body>`,
+		`div = body`,
+		`<div class="body"> :( <body>`,
+	} {
+		if rule, err := ParseRule(s); err == nil {
+			t.Fatal("expected error", rule)
+		}
+	}
+}
+
 func TestRuleString(t *testing.T) {
 	rule := Rule{NewNode(atom.Div, "class", "body"), "=", NewNode(atom.Body)}
 	if rule.String() != `<div class="body"> = <body>` {
