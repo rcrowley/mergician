@@ -76,11 +76,13 @@ func main() {
 
 func must(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Output(2, err.Error())
 	}
 }
 
 func must2[T any](v T, err error) T {
-	must(err)
+	if err != nil {
+		log.Output(2, err.Error())
+	}
 	return v
 }
