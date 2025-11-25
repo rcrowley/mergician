@@ -182,6 +182,7 @@ See also
 
 Mergician powers a whole suite of tools that manipulate HTML documents:
 
+* [Critaique](https://github.com/rcrowley/critaique): Prompt an LLM to make suggestions for improving your writing, ask follow-up questions, etc.
 * [Deadlinks](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
 * [Electrostatic](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
 * [Feed](https://github.com/rcrowley/feed): Scan a document root directory to construct an Atom feed
