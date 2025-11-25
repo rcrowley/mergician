@@ -56,5 +56,5 @@ func (n TextOnlyNode) String() string {
 			ss = append(ss, s)
 		}
 	}
-	return strings.Join(ss, " ")
+	return strings.TrimSpace(strings.Join(ss, " "))
 }
