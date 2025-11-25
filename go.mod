@@ -1,9 +1,9 @@
 module github.com/rcrowley/mergician
 
-go 1.24.5
+go 1.24.6
 
 require (
 	github.com/yuin/goldmark v1.7.13
-	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792
-	golang.org/x/net v0.42.0
+	golang.org/x/exp v0.0.0-20250808145144-a408d31f581a
+	golang.org/x/net v0.43.0
 )
