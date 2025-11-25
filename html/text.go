@@ -1,6 +1,10 @@
 package html
 
-import "strings"
+import (
+	"strings"
+
+	"golang.org/x/net/html/atom"
+)
 
 func NewTextNode(s string) *Node {
 	return &Node{
@@ -28,8 +32,16 @@ func Text(in *Node) (out TextOnlyNode) {
 			out.Nodes = append(out.Nodes, o)
 		}
 	}
-	if in.Type == TextNode && strings.TrimSpace(in.Data) != "" {
-		out.Text = in.Data
+	switch in.Type {
+	case ElementNode:
+		switch in.DataAtom {
+		case atom.Blockquote, atom.H1, atom.H2, atom.H3, atom.H4, atom.H5, atom.H6, atom.P, atom.Pre:
+			out.Text = "\n\n"
+		}
+	case TextNode:
+		if strings.TrimSpace(in.Data) != "" {
+			out.Text = in.Data
+		}
 	}
 	return
 }
