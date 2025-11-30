@@ -123,6 +123,9 @@ func ParseString(s string) (*Node, error) {
 var consecutiveNewlines = regexp.MustCompile("\n\n+")
 
 func removeConsecutiveNewlines(n *Node) {
+	if IsAtom(atom.Pre)(n) {
+		return
+	}
 	if IsWhitespace(n) {
 		n.Data = consecutiveNewlines.ReplaceAllString(n.Data, "\n")
 	}

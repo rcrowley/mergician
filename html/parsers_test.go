@@ -55,6 +55,36 @@ func TestParseStringDocument(t *testing.T) {
 	}
 }
 
+func TestParseStringDocumentPreWithBlankLines(t *testing.T) {
+	n, err := ParseString(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TestParseStringDocumentPreWithBlankLines</title>
+</head>
+<body>
+<pre>
+
+
+</pre>
+</body>
+</html>
+`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	n = Find(n, IsAtom(atom.Pre))
+	if n == nil {
+		t.Fatal(n)
+	}
+
+	actual := String(n)
+	expected := "<pre>\n\n\n</pre>"
+	if actual != expected {
+		t.Fatalf("actual: %#v != expected: %#v", actual, expected)
+	}
+}
+
 func TestParseStringFragmentBody(t *testing.T) {
 	n, err := ParseString(`<body>`)
 	if err != nil {
